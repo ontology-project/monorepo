@@ -1,49 +1,55 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { NODE_TYPES } from '../utils/constants';
+import { Box, Button, FormControl, FormLabel, Heading, Input, Select, Text } from '@chakra-ui/react';
+import { apiPost } from '../utils/api';
 
 interface CreateNodeFormProps {}
 
-interface ResponseData {
-  name?: string;
-  error?: string;
-}
-
 const CreateNodeForm: React.FC<CreateNodeFormProps> = () => {
   const [nodeName, setNodeName] = useState('');
+  const [nodeType, setNodeType] = useState('');
   const [message, setMessage] = useState('');
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const handleSubmit = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/api/create-node/', {
-        name: nodeName
+      const data = await apiPost('api/create-node/', {
+        name: nodeName,
+        type: nodeType
       });
 
-      setMessage(`Node created with name: ${response.data.name}`);
+      setMessage(`${data.type} created with name: ${data.name}`); 
       setNodeName('');
 
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        setMessage(`Error: ${error.response.data.error}`);
-      } else {
-        console.error('Unexpected error:', error);
-        setMessage('An unexpected error occurred.');
-      }
+    } catch (error: any) {
+      setMessage(error.message);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Enter node name"
-        value={nodeName}
-        onChange={(e) => setNodeName(e.target.value)}
-      />
-      <button type="submit">Create Node</button>
-      {message && <p>{message}</p>}
-    </form>
+    <Box>
+      <Heading fontSize='5xl'>Create Node</Heading>
+      <FormControl>
+        <FormLabel>Name</FormLabel>
+        <Input 
+          type="text" 
+          placeholder="Enter node name"
+          value={nodeName} 
+          onChange={(e) => setNodeName(e.target.value)} 
+        />
+      </FormControl>
+      <FormControl mt={4}>
+        <FormLabel>Type</FormLabel>
+        <Select value={nodeType} onChange={(e) => setNodeType(e.target.value)}>
+          {NODE_TYPES.map((type) => (
+            <option key={type} value={type}>
+                {type}
+            </option>
+          ))}
+        </Select>
+      </FormControl>
+      <Button onClick={handleSubmit} mt={4} type="submit">Create Node</Button>
+      {message && <Text>{message}</Text>} 
+    </Box>
   );
 };
 

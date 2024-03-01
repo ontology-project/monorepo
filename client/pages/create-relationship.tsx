@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { Box, Heading, FormControl, FormLabel, Input, Button, Select } from '@chakra-ui/react';
+import { apiPost } from '../utils/api';
+import { NODE_TYPES, RELATIONSHIPS } from '../utils/constants';
 
 interface CreateNodeWithRelationshipFormProps {}
 
-interface ResponseData {
-  name?: string;
-  error?: string;
-}
+
 
 const CreateNodeWithRelationshipForm: React.FC<CreateNodeWithRelationshipFormProps> = () => {
-  const [nodeName, setNodeName] = useState('');
-  const [otherNodeId, setOtherNodeId] = useState('');
+  const [name, setName] = useState('');
+  const [nodeType, setNodeType] = useState('');
+  const [otherName, setOtherName] = useState('');
+  const [otherType, setOtherType] = useState('');
   const [relationshipType, setRelationshipType] = useState('');
   const [message, setMessage] = useState('');
 
@@ -18,62 +19,83 @@ const CreateNodeWithRelationshipForm: React.FC<CreateNodeWithRelationshipFormPro
     event.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:8000/api/create-relationship/', {
-        name: nodeName,
-        otherNodeId: otherNodeId,
+      const response = await apiPost('api/create-relationship/', {
+        name: name,
+        type: nodeType,
+        otherName: otherName,
+        otherType: otherType,
         relationshipType: relationshipType
       });
 
-      setMessage(`Node created with name: ${response.data.name}`);
-      setNodeName('');
-      setOtherNodeId('');
+      setMessage(`Node created with name: ${response.data.name}`); 
+      setName('');
+      setNodeType('');
+      setOtherName('');
+      setOtherType('');
       setRelationshipType('');
 
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        setMessage(`Error: ${error.response.data.error}`);
-      } else {
-        console.error('Unexpected error:', error);
-        setMessage('An unexpected error occurred.');
-      }
+    } catch (error: any) {
+      setMessage(error.message);  
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="nodeName">Node Name:</label>
-        <input
-          type="text"
-          id="nodeNameInput"
-          value={nodeName}
-          onChange={(e) => setNodeName(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="otherNodeId">Other Node ID:</label>
-        <input
-          type="text"
-          id="otherNodeIdInput"
-          value={otherNodeId}
-          onChange={(e) => setOtherNodeId(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="relationshipType">Relationship Type:</label>
-        <input
-          type="text"
-          id="relationshipTypeInput"
-          value={relationshipType}
-          onChange={(e) => setRelationshipType(e.target.value)}
-          required
-        />
-      </div>
-      <button type="submit">Create Node with Relationship</button>
-      {message && <p>{message}</p>}
-    </form>
+    <Box>
+      <Heading mb={4}>Create Node with Relationship</Heading>
+      <form onSubmit={handleSubmit}>
+        <FormControl mb={2}>
+          <FormLabel>Name</FormLabel>
+          <Input 
+            type="text" 
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
+            required 
+          />
+        </FormControl>
+        <FormControl mt={4}>
+        <FormLabel>Type</FormLabel>
+        <Select value={nodeType} onChange={(e) => setNodeType(e.target.value)}>
+          {NODE_TYPES.map((type) => (
+            <option key={type} value={type}>
+                {type}
+            </option>
+          ))}
+        </Select>
+      </FormControl>
+        <FormControl mb={2}>
+          <FormLabel>Other Name</FormLabel>
+          <Input 
+            type="text" 
+            value={otherName} 
+            onChange={(e) => setOtherName(e.target.value)} 
+            required 
+          />
+        </FormControl>
+        <FormControl mt={4}>
+          <FormLabel>Other Type</FormLabel>
+          <Select value={nodeType} onChange={(e) => setOtherType(e.target.value)}>
+          {NODE_TYPES.map((type) => (
+            <option key={type} value={type}>
+                {type}
+            </option>
+          ))}
+        </Select>
+        </FormControl>
+        
+        <FormControl mb={2}>
+          <FormLabel>Relationship</FormLabel>
+          <Select value={relationshipType} onChange={(e) => setRelationshipType(e.target.value)}>
+            {RELATIONSHIPS.map((rel) => (
+              <option key={rel} value={rel}> 
+                {rel} 
+              </option>
+            ))}
+          </Select>
+        </FormControl>
+        <Button type="submit">Create Node with Relationship</Button>
+        {message && <Box mt={2}>{message}</Box>}
+      </form>
+    </Box>
   );
 };
 

@@ -11,7 +11,7 @@ import { Select } from "./components/select.theme";
 export const customTheme = extendTheme(
   {
     fonts: {
-      body: "poppins",
+      body: "",
     },
     colors: {
       primary: {

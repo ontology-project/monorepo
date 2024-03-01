@@ -1,4 +1,3 @@
-// pages/login.tsx
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
@@ -8,7 +7,7 @@ interface Credentials {
   password: string;
 }
 
-export default function Login() {
+export default function Signup() {
   const [credentials, setCredentials] = useState<Credentials>({ username: '', password: '' });
   const router = useRouter();
 
@@ -19,12 +18,12 @@ export default function Login() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/auth/jwt/create/', credentials);
-      localStorage.setItem('authToken', response.data.access);
-      router.push('/'); // Redirect to home page or dashboard after login
+      await axios.post('http://localhost:8000/auth/users/', credentials);
+      alert('Signup successful!');
+      router.push('/auth/login');
     } catch (error) {
-      console.error('Login error:', error);
-      alert('Login failed!');
+      console.error('Signup error:', error);
+      alert('Signup failed!');
     }
   };
 
@@ -38,7 +37,7 @@ export default function Login() {
         <label>Password:</label>
         <input type="password" name="password" value={credentials.password} onChange={handleChange} />
       </div>
-      <button type="submit">Login</button>
+      <button type="submit">Sign Up</button>
     </form>
   );
 }
