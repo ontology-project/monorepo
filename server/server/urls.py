@@ -21,6 +21,8 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from server.views import CreateNodeWithRelationshipView, GetMessageView, CreateNodeView
+
 schema_view = get_schema_view(
    openapi.Info(
       title="Server API",
@@ -46,4 +48,9 @@ urlpatterns += [
     # Auth endpoints
     url(r'^auth/', include('djoser.urls')),
     url(r'^auth/', include('djoser.urls.jwt')),
+    # Neo4j endpoints
+    url('api/get-message', GetMessageView.as_view()),
+    url('api/create-node', CreateNodeView.as_view()),
+    url('api/create-relationship', CreateNodeWithRelationshipView.as_view()),
+
 ]
