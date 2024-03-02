@@ -10,7 +10,7 @@ NEO4J_USER = os.environ.get("NEO4J_USERNAME")
 NEO4J_PASSWORD = os.environ.get("NEO4J_PASSWORD")
 
 class GetMessageView(APIView):
-    def get(self):
+    def get(self, request):
         message = f"Hello from the server! {NEO4J_URI} {NEO4J_USER} {NEO4J_PASSWORD}"
         return Response({'message': message})
 
@@ -24,11 +24,11 @@ class CreateNodeView(APIView):
 
         driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
 
+        query = f"MERGE (n:{node_type} {{label: '{node_name}'}}) RETURN n"
+
         #  CREATE (charlie:Person:Actor {name: 'Charlie Sheen'}), (oliver:Person:Director {name: 'Oliver Stone'})
         with driver.session() as session:
-            result = session.run(
-                f"CREATE (n:{node_type} {{name: '{node_name}'}}) RETURN n", 
-            )
+            session.run(query)
 
         return Response({'name': node_name, 'type': node_type}, status=status.HTTP_201_CREATED)
     
@@ -51,31 +51,23 @@ class CreateNodeWithRelationshipView(APIView):
         driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
 
         with driver.session() as session:
-            print("bro")
-
             query = f"""
-                    MATCH (otherNode:{other_node_type} {{name: '{other_node_name}'}})
-                    MERGE (n:{node_type} {{name: '{node_name}'}}) -[r:{relationship_type}]-> (otherNode) 
-                    RETURN n
+                    MERGE (otherNode:{other_node_type} {{label: '{other_node_name}'}})
+                    MERGE (node:{node_type} {{label: '{node_name}'}})
+                    MERGE (node) -[r:{relationship_type}]-> (otherNode) 
+                    RETURN node
                     """
             
             print("query ")
             print(query)
 
             try:
-                result = session.run(
-                    f"""
-                    MATCH (otherNode:{other_node_type} {{name: '{other_node_name}'}})
-                    MERGE (n:{node_type} {{name: '{node_name}'}}) -[r:{relationship_type}]-> (otherNode) 
-                    RETURN n
-                    """
-                )
+                session.run(query)
             except ClientError as e:
                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST) 
             
         return Response({'name': node_name, 'other_name': other_node_name, 'relationship': relationship_type}, status=status.HTTP_201_CREATED) 
     
-
 
 
 # Neo4j gone wrong
@@ -113,8 +105,3 @@ class CreateNodeWithRelationshipView(APIView):
 #         peo=peo_name, curr=curr_name, database_=USER,
 #     )
 #     return f"PEO {peo_name} has added successfully to {curr_name}"
-
-
-
-# with GraphDatabase.driver(URI, auth=AUTH) as driver:
-#     pass
