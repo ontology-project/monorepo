@@ -21,7 +21,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from server.views import CreateNodeWithRelationshipView, GetMessageView, CreateNodeView
+from server.views import *
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -52,5 +52,8 @@ urlpatterns += [
     url('api/get-message', GetMessageView.as_view()),
     url('api/create-node', CreateNodeView.as_view()),
     url('api/create-relationship', CreateNodeWithRelationshipView.as_view()),
-
+    url('api/get-relationship', GetNodeWithRelationshipView.as_view()),
+    url('api/get-node', GetNodeView.as_view()),
+    url('api/update-node', UpdateNodeView.as_view()),
+    url('api/update-relationship', UpdateNodeWithRelationshipView.as_view())
 ]

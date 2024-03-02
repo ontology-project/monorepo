@@ -66,8 +66,151 @@ class CreateNodeWithRelationshipView(APIView):
             except ClientError as e:
                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST) 
             
-        return Response({'name': node_name, 'other_name': other_node_name, 'relationship': relationship_type}, status=status.HTTP_201_CREATED) 
+        return Response({'name': node_name, 'other_name': other_node_name, 'relationship': relationship_type}, status=status.HTTP_201_CREATED)
+
+class GetNodeWithRelationshipView(APIView):
+    def get(self, request):
+        node_name = request.data.get('name')
+        node_type = request.data.get('type')
+        other_node_name = request.data.get('otherName')
+        other_node_type = request.data.get('otherType')
+        relationship_type = request.data.get('relationshipType')
+
+        print(node_name, node_type, other_node_name, other_node_type, relationship_type)
+
+        if not all([node_name, other_node_name, relationship_type]):
+            return Response(
+                {'error': 'Some error'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
+
+        with driver.session() as session:
+            query = f"""
+                    MATCH (otherNode:{other_node_type} {{label: '{other_node_name}'}})
+                    MATCH (node:{node_type} {{label: '{node_name}'}})
+                    MATCH (node) -[r:{relationship_type}]-> (otherNode) 
+                    RETURN node, r, otherNode
+                    """
+            
+            print("query ")
+            print(query)
+
+            try:
+                result = session.run(query)
+                data = result.data()[0]
+                print(data)
+            except ClientError as e:
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST) 
+            
+        return Response({'data': data}, status=status.HTTP_200_OK)
     
+class GetNodeView(APIView):
+    def get(self, request):
+        node_name = request.data.get('name')
+        node_type = request.data.get('type')
+        print(request.data)
+        print(node_name, node_type)
+
+        if not all([node_name]):
+            return Response(
+                {'error': 'Some error'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
+
+        with driver.session() as session:
+            query = f"""
+                    MATCH (node:{node_type} {{label: '{node_name}'}})
+                    RETURN node
+                    """
+            
+            print("query ")
+            print(query)
+
+            try:
+                result = session.run(query)
+                data = result.data()
+                print(data)
+            except ClientError as e:
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST) 
+            
+        return Response({'data': data}, status=status.HTTP_200_OK)
+
+class UpdateNodeView(APIView):
+    def patch(self, request):
+        node_name = request.data.get('name')
+        node_type = request.data.get('type')
+        node_field = request.data.get('field')
+        node_prop = request.data.get('prop')
+
+        print(node_name, node_type, node_field, node_prop)
+
+        if not all([node_name, node_type, node_field, node_prop]):
+            return Response(
+                {'error': 'Some error'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
+        with driver.session() as session:
+            query = f"""
+                    MATCH (node:{node_type} {{label: '{node_name}'}})
+                    SET node.{node_field} = '{node_prop}'
+                    RETURN node
+                    """
+            
+            print("query ")
+            print(query)
+
+            try:
+                result = session.run(query)
+                data = result.data()
+                print(data)
+            except ClientError as e:
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST) 
+            
+        return Response({'data': data}, status=status.HTTP_200_OK)
+
+class UpdateNodeWithRelationshipView(APIView):
+    def patch(self, request):
+        node_name = request.data.get('name')
+        node_type = request.data.get('type')
+        other_node_name = request.data.get('otherName')
+        other_node_type = request.data.get('otherType')
+        relationship_type = request.data.get('relationshipType')
+        relationship_field = request.data.get('field')
+        relationship_prop = request.data.get('prop')
+
+        print(node_name, node_type, other_node_name, other_node_type, relationship_type, relationship_field, relationship_prop)
+
+        if not all([node_name, node_type, other_node_name, other_node_type, relationship_type, relationship_field, relationship_prop]):
+            return Response(
+                {'error': 'Some error'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
+        with driver.session() as session:
+            query = f"""
+                    MATCH (node:{node_type} {{label: '{node_name}'}}) -[r:{relationship_type}]-> (otherNode:{other_node_type} {{label: '{other_node_name}'}})
+                    SET r.{relationship_field} = '{relationship_prop}'
+                    RETURN node, r, otherNode
+                    """
+            
+            print("query ")
+            print(query)
+
+            try:
+                result = session.run(query)
+                data = result.data()
+                print(data)
+            except ClientError as e:
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST) 
+            
+        return Response({'data': data}, status=status.HTTP_200_OK)
 
 
 # Neo4j gone wrong
