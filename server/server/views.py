@@ -110,8 +110,6 @@ class GetNodeView(APIView):
     def get(self, request):
         node_name = request.data.get('name')
         node_type = request.data.get('type')
-        print(request.data)
-        print(node_name, node_type)
 
         if not all([node_name]):
             return Response(
@@ -158,7 +156,7 @@ class UpdateNodeView(APIView):
         with driver.session() as session:
             query = f"""
                     MATCH (node:{node_type} {{label: '{node_name}'}})
-                    SET node.{node_field} = '{node_prop}'
+                    SET node.{node_field} = '{node_prop}' 
                     RETURN node
                     """
             
@@ -212,39 +210,115 @@ class UpdateNodeWithRelationshipView(APIView):
             
         return Response({'data': data}, status=status.HTTP_200_OK)
 
+class DeleteNodeView(APIView):
+    # For the 'mode': <empty> for normal, DETACH for cascade delete relationships, NODETACH for no cascade delete relationships
+    def delete(self, request):
+        node_name = request.data.get('name')
+        node_type = request.data.get('type')
+        mode = request.data.get('mode') if request.data.get('mode') else ''
 
-# Neo4j gone wrong
+        
 
-# def add_study_program(driver, name):
-#     driver.execute_query(
-#         "MERGE (a:StudyProgram {curriculumName: $name}) ",
-#         name=name, database_=USER,
-#     )
-#     return f"Study Program {name} has added successfully"
+        if not all([node_name, node_type]):
+            return Response(
+                {'error': 'Some error'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-# def add_curriculum(driver, sp_name, curr_name):
-#     driver.execute_query(
-#         "MERGE (sp:StudyProgram {name: $sp}) "
-#         "MERGE (c:Curriculum {curriculumName: $curr}) "
-#         "MERGE (c)<-[:belongsToSP]-(sp) ",
-#         sp=sp_name, curr=curr_name, database_=USER,
-#     )
-#     return f"Study Program {sp_name} has added successfully"
+        driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
 
-# def add_course(driver, course_name, curr_name):
-#     driver.execute_query(
-#         "MERGE (co:Course {name: $co}) "
-#         "MERGE (c:Curriculum {name: $curr}) "
-#         "MERGE (c)-[:hasCourse]->(co) ",
-#         co=course_name, curr=curr_name, database_=USER,
-#     )
-#     return f"Course {course_name} has added successfully"
+        with driver.session() as session:
+            query = f"""
+                    MATCH (node:{node_type} {{label: '{node_name}'}})
+                    {mode} DELETE node
+                    """
+            
+            print("query ")
+            print(query)
 
-# def add_peo(driver, peo_name, curr_name):
-#     driver.execute_query(
-#         "MERGE (peo:PEO {name: $peo}) "
-#         "MERGE (c:Curriculum {name: $curr}) "
-#         "MERGE (c)-[:PEO]->(peo) ",
-#         peo=peo_name, curr=curr_name, database_=USER,
-#     )
-#     return f"PEO {peo_name} has added successfully to {curr_name}"
+            try:
+                result = session.run(query)
+                data = result.data()
+                print(data)
+            except ClientError as e:
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST) 
+            
+        return Response({'data': data}, status=status.HTTP_200_OK)
+
+class DeleteRelationshipView(APIView):
+    def delete(self, request):
+        node_name = request.data.get('name')
+        node_type = request.data.get('type')
+        is_delete_all = request.data.get('isDeleteAll')
+        other_node_name = request.data.get('otherName')
+        other_node_type = request.data.get('otherType')
+        relationship_type = request.data.get('relationshipType')
+
+        if not all([node_name, node_type]):
+            return Response(
+                {'error': 'Some error'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        query = ""
+
+        if (is_delete_all == 'true'):
+            query = f"""
+                    MATCH (node:{node_type} {{label: '{node_name}'}}) -[r]-> (o)
+                    DELETE r
+                    """
+        elif (other_node_name != None or other_node_type != None):
+            query = f"""
+                    MATCH (node:{node_type} {{label: '{node_name}'}}) -[r:{relationship_type}]-> (otherNode:'{other_node_type}' {{label: '{other_node_name}'}})
+                    DELETE r
+                    """
+        else:
+            query = f"""
+                    MATCH (node:{node_type} {{label: '{node_name}'}}) -[r:{relationship_type}]-> (otherNode)
+                    DELETE r
+                    """
+
+        driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
+
+        with driver.session() as session:            
+            print("query ")
+            print(query)
+
+            try:
+                result = session.run(query)
+                data = result.data()
+                print(data)
+            except ClientError as e:
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST) 
+            
+        return Response({'data': data}, status=status.HTTP_200_OK)
+
+class DeleteFieldView(APIView):
+    def delete(self, request):
+        node_name = request.data.get('name')
+        node_type = request.data.get('type')
+        node_field = request.data.get('field')
+
+        if not all([node_name, node_type]):
+            return Response(
+                {'error': 'Some error'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        query = f"""
+                MATCH (node:{node_type} {{label: '{node_name}'}})
+                REMOVE node.{node_field}
+                """
+        driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
+
+        with driver.session() as session:            
+            print("query ")
+            print(query)
+
+            try:
+                result = session.run(query)
+                data = result.data()
+                print(data)
+            except ClientError as e:
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST) 
+            
+        return Response({'data': data}, status=status.HTTP_200_OK)       
+    

@@ -55,5 +55,9 @@ urlpatterns += [
     url('api/get-relationship', GetNodeWithRelationshipView.as_view()),
     url('api/get-node', GetNodeView.as_view()),
     url('api/update-node', UpdateNodeView.as_view()),
-    url('api/update-relationship', UpdateNodeWithRelationshipView.as_view())
+    url('api/update-relationship', UpdateNodeWithRelationshipView.as_view()),
+    url('api/delete-node', DeleteNodeView.as_view()),
+    url('api/delete-relationship', DeleteRelationshipView.as_view()),
+    url('api/delete-field', DeleteFieldView.as_view()),
+
 ]
