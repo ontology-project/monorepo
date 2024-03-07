@@ -4,7 +4,84 @@ from rest_framework.response import Response
 from rest_framework import status 
 from neo4j import GraphDatabase
 from neo4j.exceptions import ClientError
+from SPARQLWrapper import SPARQLWrapper, JSON
 
+from utils.constants import GRAPHDB_URI, PREFIX
+from utils.utils import clean_response
+
+
+# GraphDB APIs
+class GraphDBCreateNodeView(APIView):
+    def post(self, request):
+        node_name = request.data.get('name')
+        node_type = request.data.get('type')
+
+        if not node_name or not node_type:
+            return Response({'error': 'Not all values are inputted'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        query_string = f"""
+        PREFIX : <{PREFIX}> 
+        INSERT DATA {{
+            :{node_name} a :{node_type} .
+        }}
+        """
+
+        # Invalid query example
+        # query_string = f"""
+        # PREFIX : <{PREFIX}> 
+        # INSERT DATA {{
+        #     :Whiskers a :Cat .
+        #     :Whiskers a :Dog .
+        # }}
+        # """
+
+        sparql = SPARQLWrapper(GRAPHDB_URI)
+        sparql.setQuery(query_string)
+        sparql.setReturnFormat(JSON) 
+        sparql.setMethod("POST")
+
+        try:
+            results = sparql.queryAndConvert()
+            return Response({'success': True, 'results': results}) 
+        except Exception as e:
+            error_str = clean_response(str(e))
+            return Response({'success': False, 'error': error_str}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class GraphDBCreateNodeWithRelationshipView(APIView):
+    def post(self, request):
+        node_name = request.data.get('name')
+        node_type = request.data.get('type')
+        other_node_name = request.data.get('otherName')
+        other_node_type = request.data.get('otherType')
+        relationship_type = request.data.get('relationshipType')
+
+        if not all([node_name, other_node_name, relationship_type]):
+            return Response({'error': 'Name, type, and relationship type are required'}, 
+                                status=status.HTTP_400_BAD_REQUEST) 
+
+        query_string = f"""
+        PREFIX : <{PREFIX}> 
+        INSERT DATA {{
+            :{node_name} a :{node_type} .   
+            :{other_node_name} a :{other_node_type} .
+            :{node_name} :{relationship_type} :{other_node_name} .
+        }}
+        """
+
+        sparql = SPARQLWrapper(GRAPHDB_URI)
+        sparql.setQuery(query_string)
+        sparql.setReturnFormat(JSON) 
+        sparql.setMethod("POST")
+
+        try:
+            results = sparql.queryAndConvert()
+            return Response({'success': True, 'results': results}) 
+        except Exception as e:
+            error_str = clean_response(str(e)) 
+            return Response({'success': False, 'error': error_str}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# Neo4J APIs
 NEO4J_URI = os.environ.get("NEO4J_URI")
 NEO4J_USER = os.environ.get("NEO4J_USERNAME")
 NEO4J_PASSWORD = os.environ.get("NEO4J_PASSWORD")
@@ -13,7 +90,9 @@ class GetMessageView(APIView):
     def get(self, request):
         message = f"Hello from the server! {NEO4J_URI} {NEO4J_USER} {NEO4J_PASSWORD}"
         return Response({'message': message})
+    
 
+        
 class CreateNodeView(APIView):
     def post(self, request):
         node_name = request.data.get('name')
@@ -26,7 +105,6 @@ class CreateNodeView(APIView):
 
         query = f"MERGE (n:{node_type} {{label: '{node_name}'}}) RETURN n"
 
-        #  CREATE (charlie:Person:Actor {name: 'Charlie Sheen'}), (oliver:Person:Director {name: 'Oliver Stone'})
         with driver.session() as session:
             session.run(query)
 

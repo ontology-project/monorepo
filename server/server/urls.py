@@ -59,5 +59,7 @@ urlpatterns += [
     url('api/delete-node', DeleteNodeView.as_view()),
     url('api/delete-relationship', DeleteRelationshipView.as_view()),
     url('api/delete-field', DeleteFieldView.as_view()),
-
+    # GraphDB endpoints
+    url('api/graphdb/create-node', GraphDBCreateNodeView.as_view()),
+    url('api/graphdb/create-relationship', GraphDBCreateNodeWithRelationshipView.as_view()),
 ]
