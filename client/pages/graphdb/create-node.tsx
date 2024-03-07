@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { NODE_TYPES } from '../utils/constants';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, FormControl, FormLabel, Heading, Input, Select, Text } from '@chakra-ui/react';
-import { apiPost } from '../utils/api';
+import { apiGet, apiPost } from '../../utils/api';
+
 
 interface CreateNodeFormProps {}
 
@@ -9,15 +9,30 @@ const CreateNodeForm: React.FC<CreateNodeFormProps> = () => {
   const [nodeName, setNodeName] = useState('');
   const [nodeType, setNodeType] = useState('');
   const [message, setMessage] = useState('');
+  const [nodeTypeOptions, setNodeTypeOptions] = useState<string[]>();
+
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const data = await apiGet('api/graphdb/get-classes');
+        setNodeTypeOptions(data.classes);  
+      } catch (error: any) { 
+        setMessage(error.message || 'Error fetching classes.'); 
+      }
+    };
+  
+    fetchClasses();
+  }, []);
+
 
   const handleSubmit = async () => {
     try {
-      const data = await apiPost('api/create-node/', {
+      const data = await apiPost('api/graphdb/create-node/', {
         name: nodeName,
         type: nodeType
       });
 
-      setMessage(`${data.type} created with name: ${data.name}`); 
+      setMessage(`${nodeType} created with name: ${nodeName}`); 
       setNodeName('');
 
     } catch (error: any) {
@@ -25,10 +40,15 @@ const CreateNodeForm: React.FC<CreateNodeFormProps> = () => {
     }
   };
 
+  if (!nodeTypeOptions) {
+    return null;
+  }
+
+
   return (
-    <Box>
-      <Heading fontSize='5xl'>Create Node</Heading>
-      <FormControl>
+    <Box padding={10}>
+      <Heading mb={4}>GraphDB Create Node</Heading>
+      <FormControl mt={4}>
         <FormLabel>Name</FormLabel>
         <Input 
           type="text" 
@@ -40,7 +60,7 @@ const CreateNodeForm: React.FC<CreateNodeFormProps> = () => {
       <FormControl mt={4}>
         <FormLabel>Type</FormLabel>
         <Select value={nodeType} onChange={(e) => setNodeType(e.target.value)}>
-          {NODE_TYPES.map((type) => (
+          {nodeTypeOptions.map((type) => (
             <option key={type} value={type}>
                 {type}
             </option>

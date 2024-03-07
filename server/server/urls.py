@@ -62,4 +62,6 @@ urlpatterns += [
     # GraphDB endpoints
     url('api/graphdb/create-node', GraphDBCreateNodeView.as_view()),
     url('api/graphdb/create-relationship', GraphDBCreateNodeWithRelationshipView.as_view()),
+    url('api/graphdb/get-classes', GraphDBGetClassesView.as_view()),
+    url('api/graphdb/get-object-properties', GraphDBGetObjectPropertiesView.as_view()),
 ]

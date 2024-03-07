@@ -1,3 +1,5 @@
+export const BASE_URL = "http://localhost:8000/api";
+
 export const NODE_TYPES = [
     'AssesmentTask',
     'Content',
