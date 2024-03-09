@@ -55,7 +55,7 @@ class GraphDBCreateNodeWithRelationshipView(APIView):
         right_type = request.data.get('rightType')
         relationship_type = request.data.get('relationshipType')
 
-        if not all([left_name, right_name, relationship_type]):
+        if not all([left_name, left_type, right_name, right_type, relationship_type]):
             return Response({'error': 'Name, type, and relationship type are required'}, 
                                 status=status.HTTP_400_BAD_REQUEST) 
 
@@ -134,9 +134,120 @@ class GraphDBGetObjectPropertiesView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class GraphDBGetNodeView(APIView):
+    def get(self, request):
+        name = request.data.get('name')
+        type = request.data.get('type')
 
+        query_string = f"""
+        PREFIX : <{PREFIX}> 
+        PREFIX owl: <{OWL}>
 
+        SELECT ?rel ?obj
+        WHERE {{
+          :{name} a :{type} ;
+                ?rel ?obj .
+        }}
+        """
+        sparql = SPARQLWrapper(GRAPHDB_GET) 
+        sparql.setQuery(query_string)
+        sparql.setReturnFormat(JSON)
+        sparql.setMethod("GET")
 
+        print("sparqql", query_string)
+
+        try:
+            results = sparql.queryAndConvert()
+            properties = {clean_response(result["rel"]["value"]):clean_response(result["obj"]["value"]) for result in results["results"]["bindings"]}
+            return Response({'properties': properties})
+
+        except Exception as e:
+            print(e)
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class GraphDBGetNodeWithRelationshipView(APIView):
+    def get(self, request):
+        name = request.data.get('name')
+        type = request.data.get('type')
+        prefix = request.data.get('prefix') if request.data.get('prefix') else ''
+        relationship_type = request.data.get('relationshipType')
+
+        if not all([name, type, relationship_type]):
+            return Response({'error': 'Name, type, and relationship type are required'}, 
+                                status=status.HTTP_400_BAD_REQUEST) 
+
+        query_string = f"""
+        PREFIX : <{PREFIX}> 
+        PREFIX rdf: <{RDF}>
+        PREFIX owl: <{OWL}>
+
+        SELECT ?obj
+        WHERE {{
+          :{name} a :{type} ;
+                {prefix}:{relationship_type} ?obj .
+        }}
+        """
+
+        sparql = SPARQLWrapper(GRAPHDB_GET) 
+        sparql.setQuery(query_string)
+        sparql.setReturnFormat(JSON)
+        sparql.setMethod("POST")
+
+        print("sparqql", query_string)
+
+        try:
+            results = sparql.queryAndConvert()
+            properties = [clean_response(result["obj"]["value"]) for result in results["results"]["bindings"]]
+            return Response({'properties': properties})
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class GraphDBUpdateNodeView(APIView):
+    def patch(self, request):
+        name = request.data.get('name')
+        type = request.data.get('type')
+        node_field = request.data.get('field')
+        node_prop = request.data.get('prop')
+
+        if not all([name, type, node_field, node_prop]):
+            return Response({'error': 'Name, type, field, and property are required'}, 
+                                status=status.HTTP_400_BAD_REQUEST)
+        
+        query_string = f"""
+        PREFIX : <{PREFIX}> 
+        PREFIX rdf: <{RDF}>
+        PREFIX owl: <{OWL}>
+
+        DELETE {{
+            :{name} a :{type} ;
+                    :{node_field} ?oldProp .
+        }}
+        INSERT {{
+            :{name} a :{type} ;
+                    :{node_field} :{node_prop} .
+        }}
+        WHERE {{
+            :{name} a :{type} ;
+            OPTIONAL {{
+                :{name} :{node_field} ?oldProp
+            }}
+        }}
+        """
+        sparql = SPARQLWrapper(GRAPHDB_POST) 
+        sparql.setQuery(query_string)
+        sparql.setReturnFormat(JSON)
+        sparql.setMethod("POST")
+
+        print("sparqql", query_string)
+
+        try:
+            sparql.queryAndConvert()
+
+            return Response({'success': 'Update Success!'})
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # Neo4J APIs
