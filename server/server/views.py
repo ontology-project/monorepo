@@ -51,8 +51,8 @@ class GraphDBCreateNodeWithRelationshipView(APIView):
     def post(self, request):
         left_name = request.data.get('name')
         left_type = request.data.get('type')
-        right_name = request.data.get('rightName')
-        right_type = request.data.get('rightType')
+        right_name = request.data.get('otherName')
+        right_type = request.data.get('otherType')
         relationship_type = request.data.get('relationshipType')
 
         if not all([left_name, left_type, right_name, right_type, relationship_type]):
@@ -248,7 +248,105 @@ class GraphDBUpdateNodeView(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class GraphDBUpdateNodeWithRelationshipView(APIView):
+    def patch(self, request):
+        left_name = request.data.get('name')
+        left_type = request.data.get('type')
+        right_name = request.data.get('otherName')
+        right_type = request.data.get('otherType')
+        rel_type = request.data.get('relType')
+        rel_field = request.data.get('relField')
+        rel_prop = request.data.get('relProp')
 
+        if not all([left_name, left_type, right_name, right_type, rel_type, rel_field, rel_prop]):
+            return Response({'error': 'Name, type, field, and property are required'}, 
+                                status=status.HTTP_400_BAD_REQUEST)
+        
+        query_string = f"""
+        PREFIX : <{PREFIX}> 
+        PREFIX rdf: <{RDF}>
+        PREFIX owl: <{OWL}>
+
+        DELETE {{
+            :{left_name} a :{left_type} .
+            :{right_name} a :{right_type} .
+            :{left_name} :{rel_type} :{right_name} .
+            :{rel_type} :{rel_field} ?oldProp .
+        }}
+        INSERT {{
+            :{left_name} a :{left_type} .
+            :{right_name} a :{right_type} .
+            :{left_name} :{rel_type} :{right_name} .
+            :{rel_type} :{rel_field} :{rel_prop} .
+            
+        }}
+        WHERE {{
+            :{left_name} a :{left_type} .
+            :{right_name} a :{right_type} .
+            :{left_name} :{rel_type} :{right_name} .
+            OPTIONAL {{
+                :{rel_type} :{rel_field} ?oldProp
+            }}
+        }}
+        """
+        sparql = SPARQLWrapper(GRAPHDB_POST) 
+        sparql.setQuery(query_string)
+        sparql.setReturnFormat(JSON)
+        sparql.setMethod("POST")
+
+        print("sparqql", query_string)
+
+        try:
+            sparql.queryAndConvert()
+
+            return Response({'success': 'Update Success!'})
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+class GraphDBDeleteNodeView(APIView):
+    def delete(self, request):
+        left_name = request.data.get('name')
+        left_type = request.data.get('type')
+
+        if not all([left_name, left_type]):
+            return Response({'error': 'Name, type, field, and property are required'}, 
+                                status=status.HTTP_400_BAD_REQUEST)
+        query_string = f"""
+        PREFIX : <{PREFIX}> 
+        PREFIX rdf: <{RDF}>
+        PREFIX owl: <{OWL}>
+
+        DELETE {{
+            :{left_name} a :{left_type} .
+            :{left_name} ?rel ?obj .
+            ?rel ?field ?oldProp .
+        }}
+        WHERE {{
+            :{left_name} a :{left_type} .
+            :{left_name} ?rel ?obj .
+            ?rel ?field ?oldProp .
+            FILTER (STRSTARTS(STR(?rel), "{PREFIX}"))
+        }}
+        """
+
+        sparql = SPARQLWrapper(GRAPHDB_POST) 
+        sparql.setQuery(query_string)
+        sparql.setReturnFormat(JSON)
+        sparql.setMethod("POST")
+
+        print("sparqql", query_string)
+
+        try:
+            sparql.queryAndConvert()
+
+            return Response({'success': 'Delete Success!'})
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+ 
 
 # Neo4J APIs
 NEO4J_URI = os.environ.get("NEO4J_URI")
