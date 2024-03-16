@@ -3,9 +3,9 @@ import { Box, Button, FormControl, FormLabel, Heading, Input, Select, Text } fro
 import { apiGet, apiPost } from '../../utils/api';
 
 
-interface CreateNodeFormProps {}
+interface CreateNodeProps {}
 
-const CreateNodeForm: React.FC<CreateNodeFormProps> = () => {
+const CreateNode: React.FC<CreateNodeProps> = () => {
   const [nodeName, setNodeName] = useState('');
   const [nodeType, setNodeType] = useState('');
   const [message, setMessage] = useState('');
@@ -73,4 +73,4 @@ const CreateNodeForm: React.FC<CreateNodeFormProps> = () => {
   );
 };
 
-export default CreateNodeForm;
+export default CreateNode;

@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Box, Heading, FormControl, FormLabel, Input, Button, Select } from '@chakra-ui/react';
 import { apiGet, apiPost } from '../../utils/api';
 
-interface CreateNodeWithRelationshipFormProps {}
+interface CreateRelationshipProps {}
 
 
-const CreateNodeWithRelationshipForm: React.FC<CreateNodeWithRelationshipFormProps> = () => {
+const CreateRelationship: React.FC<CreateRelationshipProps> = () => {
   const [name, setName] = useState('');
   const [nodeType, setNodeType] = useState('');
   const [rightName, setOtherName] = useState('');
@@ -131,4 +131,4 @@ const CreateNodeWithRelationshipForm: React.FC<CreateNodeWithRelationshipFormPro
   );
 };
 
-export default CreateNodeWithRelationshipForm;
+export default CreateRelationship;
