@@ -51,8 +51,8 @@ class GraphDBCreateNodeWithRelationshipView(APIView):
     def post(self, request):
         left_name = request.data.get('name')
         left_type = request.data.get('type')
-        right_name = request.data.get('otherName')
-        right_type = request.data.get('otherType')
+        right_name = request.data.get('rightName')
+        right_type = request.data.get('rightType')
         relationship_type = request.data.get('relationshipType')
 
         if not all([left_name, left_type, right_name, right_type, relationship_type]):
@@ -83,6 +83,7 @@ class GraphDBCreateNodeWithRelationshipView(APIView):
 
 class GraphDBGetClassesView(APIView):
     def get(self, request):
+        print("lol")
         query_string = f"""
         PREFIX : <{PREFIX}> 
         PREFIX owl: <{OWL}>
@@ -97,6 +98,7 @@ class GraphDBGetClassesView(APIView):
         sparql.setQuery(query_string)
         sparql.setReturnFormat(JSON)
         sparql.setMethod("POST")
+
 
         try:
             results = sparql.queryAndConvert()
@@ -253,8 +255,8 @@ class GraphDBUpdateNodeWithRelationshipView(APIView):
     def patch(self, request):
         left_name = request.data.get('name')
         left_type = request.data.get('type')
-        right_name = request.data.get('otherName')
-        right_type = request.data.get('otherType')
+        right_name = request.data.get('rightName')
+        right_type = request.data.get('rightType')
         rel_type = request.data.get('relType')
         rel_field = request.data.get('relField')
         rel_prop = request.data.get('relProp')

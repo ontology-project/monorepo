@@ -53,6 +53,8 @@ const CreateNodeWithRelationshipForm: React.FC<CreateNodeWithRelationshipFormPro
         relationshipType: relationshipType
       });
 
+      
+
       setMessage(`${name}-${relationshipType}-${rightName} created.`); 
       setName('');
       setNodeType('');
