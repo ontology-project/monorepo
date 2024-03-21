@@ -7,11 +7,13 @@ import {
   Input,
   Button,
 } from '@chakra-ui/react';
+import { imageApiPost } from '../../utils/api';
 
 interface UploadExcelProps {}
 
 const UploadExcel: React.FC<UploadExcelProps> = () => {
   const [file, setFile] = useState<File | null>(null);
+  const [message, setMessage] = useState('');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -20,10 +22,18 @@ const UploadExcel: React.FC<UploadExcelProps> = () => {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (file) {
-      console.log("Uploading file:", file.name);
+      console.log('Uploading file:', file.name);
+
+      try {
+        const response = await imageApiPost('api/import-excel', file);
+        console.log(response);
+        setMessage(`Upload success!\nResponse: ${JSON.stringify(response)}`);
+      } catch (error: any) {
+        setMessage(error.message);
+      }
     }
   };
 
@@ -45,6 +55,7 @@ const UploadExcel: React.FC<UploadExcelProps> = () => {
           Submit
         </Button>
       </form>
+      {message && <Box mt={2}>{message}</Box>}
     </Box>
   );
 };
