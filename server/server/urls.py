@@ -68,5 +68,7 @@ urlpatterns += [
     url('api/graphdb/get-relationship', GraphDBGetNodeWithRelationshipView.as_view()),
     url('api/graphdb/update-node', GraphDBUpdateNodeView.as_view()),
     url('api/graphdb/update-relationship', GraphDBUpdateNodeWithRelationshipView.as_view()),
-    url('api/graphdb/delete-node', GraphDBDeleteNodeView.as_view())
+    url('api/graphdb/delete-node', GraphDBDeleteNodeView.as_view()),
+    # Import Excel endpoint(s)
+    url('api/import-excel', ImportExcelAPIView.as_view())
 ]

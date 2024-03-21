@@ -2,12 +2,15 @@ import os
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status 
+from rest_framework.parsers import MultiPartParser, FormParser
 from neo4j import GraphDatabase
 from neo4j.exceptions import ClientError
 from SPARQLWrapper import SPARQLWrapper, JSON
 
 from utils.constants import GRAPHDB_GET, GRAPHDB_POST, OWL, PREFIX, RDF
 from utils.utils import clean_response
+from .serializers import ImportSerializer
+import pandas as pd
 
 
 # GraphDB APIs
@@ -349,6 +352,60 @@ class GraphDBDeleteNodeView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
  
+# Excel APIs
+class ImportExcelAPIView(APIView):
+    serializers_class = ImportSerializer
+    parser_classes = [MultiPartParser, FormParser]
+    
+    def post(self, request):
+        try:
+            error_list = []
+            data = request.FILES
+            serializer = self.serializers_class(data=data)
+            if not serializer.is_valid():
+                return Response({
+                    'status': False,
+                    'message': 'Provide a valid file'
+                }, status-status.HTTP_400_BAD_REQUEST)
+            excel_file = data.get('file')
+
+            # Transform data to dataframe pandas
+            df = pd.read_excel(excel_file,sheet_name=0) #sheet_name = Sheet seq. number on excel
+
+            for index, row in df.iterrows():
+                first_name = str(row['First Name']) if str(row['First Name']) != "nan" else ""
+                last_name = str(row['Last Name']) if str(row['Last Name']) != "nan" else ""
+                email = str(row['Email']) if str(row['Email']) != "nan" else ""
+
+                if not all([first_name, last_name, email]):
+                    error_list.append(index+2)
+                
+                first_name = first_name.replace(" ", "-")
+                last_name = last_name.replace(" ", "-")
+                email = email.replace("@", "\@")
+
+                query_string = f"""
+                    PREFIX : <{PREFIX}> 
+                    INSERT DATA {{
+                        :{first_name + "_" + last_name} a :Person .   
+                        :{first_name + "_" + last_name} :hasEmail :{email} .
+                    }}
+                    """
+
+                sparql = SPARQLWrapper(GRAPHDB_POST) 
+                sparql.setQuery(query_string)
+                sparql.setReturnFormat(JSON)
+                sparql.setMethod("POST")
+
+                print("sparqql", query_string)
+
+                sparql.queryAndConvert()
+
+            return Response({'success': 'Import success', 'unimported': error_list})
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # Neo4J APIs
 NEO4J_URI = os.environ.get("NEO4J_URI")
