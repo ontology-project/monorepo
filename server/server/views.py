@@ -369,8 +369,9 @@ class ImportExcelAPIView(APIView):
                     'message': 'Provide a valid file'
                 }, status-status.HTTP_400_BAD_REQUEST)
             excel_file = data.get('file')
-
-            error_dict = import_excel(excel_file)       
+            print("HELLO")
+            error_dict = import_excel(excel_file)
+            print("OUI")   
 
             return Response({'success': 'Import success', 'unimported': error_dict})
 

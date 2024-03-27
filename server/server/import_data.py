@@ -5,15 +5,25 @@ import pandas as pd
 
 def import_excel(excel_file):
     error_dict = {}
+    print("Sheet 1")
     error_dict['StudyProgram_Curriculum'] = import_SP_curriculum(excel_file)
+    print("Sheet 2")
     error_dict['Curriculum_PEO'] = import_curriculum_PEO(excel_file)
+    print("Sheet 3")
     error_dict['PEO_PLO'] = import_PEO_PLO(excel_file)
+    print("Sheet 4")
     error_dict['PLO_CLO'] = import_PLO_CLO(excel_file)
+    print("Sheet 5")
     error_dict['CLO_ULO'] = import_CLO_ULO(excel_file)
+    print("Sheet 6")
     error_dict['ULO_Criteria (OPTIONAL)'] = import_ULO_criteria(excel_file)
+    print("Sheet 7")
     error_dict['Curriculum_Course'] = import_curriculum_course(excel_file)
+    print("Sheet 8")
     error_dict['Course_CLO'] = import_course_CLO(excel_file)
+    print("Sheet 9")
     error_dict['Course_PLO'] = import_course_PLO(excel_file)
+    print("Sheet 10")
     error_dict['Course_Content'] = import_course_content(excel_file)
 
     return error_dict
@@ -36,6 +46,8 @@ def import_SP_curriculum(excel_file):
         study_program = clean_cell(study_program)
         curriculum = clean_cell(curriculum)
 
+        print(study_program, curriculum, curriculum_desc)
+
         query_string = f"""
             PREFIX : <{PREFIX}>
             PREFIX owl: <{OWL}>
@@ -48,7 +60,7 @@ def import_SP_curriculum(excel_file):
                 FILTER NOT EXISTS {{
                     :{study_program} a :StudyProgram
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{curriculum} a :Curriculum ;
@@ -58,7 +70,7 @@ def import_SP_curriculum(excel_file):
                 FILTER NOT EXISTS {{
                     :{curriculum} a :Curriculum
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{study_program} :hasCurriculum :{curriculum}
@@ -67,7 +79,7 @@ def import_SP_curriculum(excel_file):
                 FILTER NOT EXISTS {{
                     :{study_program} :hasCurriculum :{curriculum}
                 }}
-            }}
+            }};
             """
 
         sparql = SPARQLWrapper(GRAPHDB_POST) 
@@ -78,6 +90,7 @@ def import_SP_curriculum(excel_file):
         print("sparqql", query_string)
 
         sparql.queryAndConvert()
+        print("ACHIEVED")
 
     return error_list
 
@@ -115,7 +128,7 @@ def import_curriculum_PEO(excel_file):
                 FILTER NOT EXISTS {{
                     :{curriculum} a :Curriculum .
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{peo}  a :ProgramEducationalObjective ;
@@ -128,7 +141,7 @@ def import_curriculum_PEO(excel_file):
                 FILTER NOT EXISTS {{
                     :{peo} a :ProgramEducationalObjective .
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{curriculum} :hasPEO :{peo} .
@@ -189,7 +202,7 @@ def import_PEO_PLO(excel_file):
                 FILTER NOT EXISTS {{
                     :{peo} a :ProgramEducationalObjective .
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{plo}  a :ProgramLearningOutcome ;
@@ -274,7 +287,7 @@ def import_PLO_CLO(excel_file):
                 FILTER NOT EXISTS {{
                     :{plo} a :ProgramLearningOutcome .
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{clo}  a :CourseLearningOutcome ;
@@ -332,7 +345,7 @@ def import_CLO_ULO(excel_file):
                 FILTER NOT EXISTS {{
                     :{clo} a :CourseLearningOutcome .
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{ulo}  a :UnitLearningOutcome ;
@@ -388,7 +401,7 @@ def import_ULO_criteria(excel_file):
                 FILTER NOT EXISTS {{
                     :{ulo} a :UnitLearningOutcome .
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{criteria}  a :Criteria .
@@ -397,7 +410,7 @@ def import_ULO_criteria(excel_file):
                 FILTER NOT EXISTS {{
                     :{criteria} a :Criteria .
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{ulo} :hasCriteria :{criteria} .
@@ -450,7 +463,7 @@ def import_curriculum_course(excel_file):
                 FILTER NOT EXISTS {{
                     :{curriculum} a :Curriculum .
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{course}  a :Course .
@@ -459,7 +472,7 @@ def import_curriculum_course(excel_file):
                 FILTER NOT EXISTS {{
                     :{course} a :Course .
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{curriculum} :hasCriteria :{course} .
@@ -513,7 +526,7 @@ def import_course_CLO(excel_file):
                 FILTER NOT EXISTS {{
                     :{course} a :Course .
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{clo}  a :CLO .
@@ -522,7 +535,7 @@ def import_course_CLO(excel_file):
                 FILTER NOT EXISTS {{
                     :{clo} a :CLO .
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{course} :hasCLO :{clo} .
@@ -576,7 +589,7 @@ def import_course_PLO(excel_file):
                 FILTER NOT EXISTS {{
                     :{course} a :Course .
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{plo}  a :PLO .
@@ -585,7 +598,7 @@ def import_course_PLO(excel_file):
                 FILTER NOT EXISTS {{
                     :{plo} a :PLO .
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{plo} :ploHasCourse :{course} .
@@ -639,7 +652,7 @@ def import_course_content(excel_file):
                 FILTER NOT EXISTS {{
                     :{course} a :Course .
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{content}  a :Content .
@@ -648,7 +661,7 @@ def import_course_content(excel_file):
                 FILTER NOT EXISTS {{
                     :{content} a :Content .
                 }}
-            }}
+            }};
 
             INSERT {{
                 :{course} :coversContent :{content} .
