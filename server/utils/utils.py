@@ -12,3 +12,10 @@ def clean_response(response: str) -> str:
     response = re.sub(r"\s{2,}", " ", response)
 
     return response
+
+
+def clean_cell(response: str) -> str:
+    """
+    Replace all space (" ") occurences with underscore ("_")
+    """
+    return response.replace(" ", "_")
