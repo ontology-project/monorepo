@@ -56,21 +56,23 @@ def import_SP_curriculum(excel_file):
 
             INSERT {{
                 :{study_program} a :StudyProgram .
-            }} 
+            }}
             WHERE {{
                 FILTER NOT EXISTS {{
                     :{study_program} a :StudyProgram
                 }}
             }};
 
+            DELETE {{
+                :{curriculum}   a :Curriculum ;
+                                :curriculumName ?oldCurrName .
+            }}
             INSERT {{
-                :{curriculum} a :Curriculum ;
-                    :curriculumName "{curriculum_desc}"
+                :{curriculum}   a :Curriculum ;
+                                :curriculumName "{curriculum_desc}"
             }}  
             WHERE {{
-                FILTER NOT EXISTS {{
-                    :{curriculum} a :Curriculum
-                }}
+                OPTIONAL{{ :{curriculum} :curriculumName ?oldCurrName }}
             }};
 
             INSERT {{
@@ -148,6 +150,18 @@ def import_curriculum_PEO(excel_file):
                 }}
             }};
 
+            DELETE {{
+                :{peo}  a :ProgramEducationalObjective ;
+                        :label ?oldPEOLabel ;
+                        :hasDomain ?oldDomain ;
+                        :nqfAuthorityResponsibility ?oldNQFAuthorityResp ;
+                        :nqfKnowledge ?oldNQFKnowledge ;
+                        :nqfWorkingSkill ?oldNQFWorkingSkill ;
+                        :nsAttitude ?oldNSAttitude ;
+                        :nsKnowledge ?oldNSKnowledge ;
+                        :nsGenericSkill ?oldNSGenericSkill ;
+                        :nsSpecificSkill ?oldNSSpecificSkill .
+            }}
             INSERT {{
                 :{peo}  a :ProgramEducationalObjective ;
                         :label "{description}" ;
@@ -161,9 +175,18 @@ def import_curriculum_PEO(excel_file):
                         {f':nsSpecificSkill "{ns_specific_skill}" ;'          if ns_specific_skill != "" else ""}
             }}
             WHERE {{
-                FILTER NOT EXISTS {{
-                    :{peo} a :ProgramEducationalObjective .
-                }}
+                OPTIONAL {{ 
+                    :{peo}  a :ProgramEducationalObjective ;
+                            :label ?oldPEOLabel ;
+                            :hasDomain ?oldDomain ;
+                            :nqfAuthorityResponsibility ?oldNQFAuthorityResp ;
+                            :nqfKnowledge ?oldNQFKnowledge ;
+                            :nqfWorkingSkill ?oldNQFWorkingSkill ;
+                            :nsAttitude ?oldNSAttitude ;
+                            :nsKnowledge ?oldNSKnowledge ;
+                            :nsGenericSkill ?oldNSGenericSkill ;
+                            :nsSpecificSkill ?oldNSSpecificSkill . 
+                    }}
             }}; 
             """
         
@@ -238,7 +261,20 @@ def import_PEO_PLO(excel_file):
                     :{peo} a :ProgramEducationalObjective .
                 }}
             }};
-
+            
+            DELETE {{
+                :{plo}  a :ProgramLearningOutcome ;
+                        :partOf ?oldPLOLabel ;
+                        :label ?oldLabel ;
+                        :nqfAuthorityResponsibility ?oldNQFAuthorityResp ;
+                        :nqfKnowledge ?oldNQFKnowledge ;
+                        :nqfWorkingSkill ?oldNQFWorkingSkill ;
+                        :nsAttitude ?oldNSAttitude ;
+                        :nsKnowledge ?oldNSKnowledge ;
+                        :nsGenericSkill ?oldNSGenericSkill ;
+                        :nsSpecificSkill ?oldNSSpecificSkill ;
+                        :hasDomain ?oldDomain .
+            }}
             INSERT {{
                 :{plo}  a :ProgramLearningOutcome ;
                         :partOf :{peo} ;
@@ -253,24 +289,40 @@ def import_PEO_PLO(excel_file):
                         :hasDomain :{learning_domain} .
             }}
             WHERE {{
-                FILTER NOT EXISTS {{
-                    :{plo} a :ProgramLearningOutcome .
-                }}
+                OPTIONAL {{ 
+                    :{plo}  a :ProgramLearningOutcome ;  
+                            :label ?oldPEOLabel ;
+                            :hasDomain ?oldDomain ;
+                            :nqfAuthorityResponsibility ?oldNQFAuthorityResp ;
+                            :nqfKnowledge ?oldNQFKnowledge ;
+                            :nqfWorkingSkill ?oldNQFWorkingSkill ;
+                            :nsAttitude ?oldNSAttitude ;
+                            :nsKnowledge ?oldNSKnowledge ;
+                            :nsGenericSkill ?oldNSGenericSkill ;
+                            :nsSpecificSkill ?oldNSSpecificSkill . 
+                    }}
             }};
             """
         
         if (sub_plo != "EMPTY"):
             query_string += f"""
+            DELETE {{
+                :{sub_plo}  a :SubProgramLearningOutcome ;
+                            :partOf ?oldPLO ;
+                            :nsKnowledge ?oldNSKnowledge ;
+                            :hasDomain ?oldDomain .
+            }}
             INSERT {{
                 :{sub_plo}  a :SubProgramLearningOutcome ;
                             :partOf :{plo} ;
                             :nsKnowledge "{knowledge_cat}" ;
-                            :hasDomain :{learning_domain} ;
+                            :hasDomain :{learning_domain} .
             }}
             WHERE {{
-                FILTER NOT EXISTS {{
-                    :{sub_plo} a :SubProgramLearningOutcome .
-                }}
+                :{sub_plo}  a :SubProgramLearningOutcome ;
+                            :partOf ?oldPLO ;
+                            :nsKnowledge ?oldNSKnowledge ;
+                            :hasDomain ?oldDomain .
             }};
             """
             if (rel == "yes"):
@@ -330,6 +382,12 @@ def import_PLO_CLO(excel_file):
                 }}
             }};
 
+            DELETE {{
+                :{clo}  a :CourseLearningOutcome ;
+                        :partOf ?oldPLO ;
+                        :hasDomain ?oldDomain ;
+                        :nsKnowledge ?oldNSKnowledge .
+            }}
             INSERT {{
                 :{clo}  a :CourseLearningOutcome ;
                         :partOf :{plo} ;
@@ -337,8 +395,11 @@ def import_PLO_CLO(excel_file):
                         :nsKnowledge "{knowledge_cat}" .
             }}
             WHERE {{
-                FILTER NOT EXISTS {{
-                    :{clo} a :CourseLearningOutcome .
+                OPTIONAL {{
+                    :{clo}  a :CourseLearningOutcome ;
+                            :partOf ?oldPLO ;
+                            :hasDomain ?oldDomain ;
+                            :nsKnowledge ?oldNSKnowledge .
                 }}
             }}
             """
@@ -388,6 +449,12 @@ def import_CLO_ULO(excel_file):
                 }}
             }};
 
+            DELETE {{
+                :{ulo}  a :UnitLearningOutcome ;
+                        :partOf ?oldCLO ;
+                        :hasDomain ?oldDomain ;
+                        :nsKnowledge ?oldNSKnowledge .
+            }}
             INSERT {{
                 :{ulo}  a :UnitLearningOutcome ;
                         :partOf :{clo} ;
@@ -395,8 +462,11 @@ def import_CLO_ULO(excel_file):
                         :nsKnowledge "{knowledge_cat}" .
             }}
             WHERE {{
-                FILTER NOT EXISTS {{
-                    :{ulo} a :CourseLearningOutcome .
+                OPTIONAL {{
+                    :{ulo}  a :UnitLearningOutcome ;
+                            :partOf ?oldCLO ;
+                            :hasDomain ?oldDomain ;
+                            :nsKnowledge ?oldNSKnowledge .
                 }}
             }}
             """
