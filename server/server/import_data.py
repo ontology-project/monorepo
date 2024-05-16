@@ -178,14 +178,7 @@ def import_curriculum_PEO(excel_file):
                 OPTIONAL {{ 
                     :{peo}  a :ProgramEducationalObjective ;
                             :label ?oldPEOLabel ;
-                            :hasDomain ?oldDomain ;
-                            :nqfAuthorityResponsibility ?oldNQFAuthorityResp ;
-                            :nqfKnowledge ?oldNQFKnowledge ;
-                            :nqfWorkingSkill ?oldNQFWorkingSkill ;
-                            :nsAttitude ?oldNSAttitude ;
-                            :nsKnowledge ?oldNSKnowledge ;
-                            :nsGenericSkill ?oldNSGenericSkill ;
-                            :nsSpecificSkill ?oldNSSpecificSkill . 
+                            :hasDomain ?oldDomain . 
                     }}
             }}; 
             """
