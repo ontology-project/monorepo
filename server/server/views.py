@@ -373,7 +373,7 @@ class ImportExcelAPIView(APIView):
             error_dict = import_excel(excel_file)
             print("OUI")   
 
-            return Response({'success': 'Import success', 'unimported': error_dict})
+            return Response({'success': 'Import success', 'unimported': error_dict}, status=200)
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

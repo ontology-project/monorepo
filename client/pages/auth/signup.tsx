@@ -75,8 +75,8 @@ export default function Signup() {
         justifyContent="center"
         alignItems="center"
       >
-        <Avatar bg="teal.500" />
-        <Heading color="teal.400">Create Account</Heading>
+        <Avatar bg="purple.500" />
+        <Heading color="purple.400">Create Account</Heading>
         <Box minW={{ base: "90%", md: "468px" }}>
           <form onSubmit={handleSubmit}>
             <Stack
@@ -125,7 +125,6 @@ export default function Signup() {
                 borderRadius={0}
                 type="submit"
                 variant="solid"
-                colorScheme="teal"
                 width="full"
               >
                 Sign Up
@@ -136,7 +135,7 @@ export default function Signup() {
       </Stack>
       <Box>
         Already have an account?{" "}
-        <Link color="teal.500" href="/auth/login">
+        <Link color="purple.500" href="/auth/login">
           Log In
         </Link>
       </Box>

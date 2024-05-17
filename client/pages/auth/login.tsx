@@ -67,8 +67,8 @@ export default function Login() {
         justifyContent="center"
         alignItems="center"
       >
-        <Avatar bg="teal.500" />
-        <Heading color="teal.400">Welcome</Heading>
+        <Avatar bg="purple.500" />
+        <Heading color="purple.400">Welcome</Heading>
         <Box minW={{ base: "90%", md: "468px" }}>
           <form onSubmit={handleSubmit}>
             <Stack
@@ -114,7 +114,6 @@ export default function Login() {
                 borderRadius={0}
                 type="submit"
                 variant="solid"
-                colorScheme="teal"
                 width="full"
               >
                 Login
@@ -125,7 +124,7 @@ export default function Login() {
       </Stack>
       <Box>
         Don&apos;t have an account?{" "}
-        <Link color="teal.500" href="/auth/signup">
+        <Link color="purple.500" href="/auth/signup">
           Sign Up
         </Link>
       </Box>

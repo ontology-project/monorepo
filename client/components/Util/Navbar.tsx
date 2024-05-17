@@ -11,11 +11,11 @@ const NavBar: React.FC<NavBarProps> = ({ username, logout }) => {
   const router = useRouter();
 
   return (
-    <Flex bg="teal.500" color="white" padding="4" justifyContent="space-between" alignItems="center">
+    <Flex bg="purple.500" color="white" padding="4" justifyContent="space-between" alignItems="center">
       <Text fontSize="lg" fontWeight="bold">Ontology Project</Text>
       <Flex alignItems="center">
         <Text marginRight="8">Welcome, {username}!</Text>
-        <Button colorScheme="teal" variant="outline" onClick={logout}>Logout</Button>
+        <Button onClick={logout}>Logout</Button>
       </Flex>
     </Flex>
   );
