@@ -1,7 +1,7 @@
-// components/AuthCheck.tsx
 import React from 'react';
 import { useAuth } from '../utils/util';
 import styles from '../styles/Home.module.css'
+import Link from 'next/link';
 
 const AuthCheck: React.FC = ({ children }) => {
   const { isLoggedIn, username } = useAuth();
@@ -11,7 +11,7 @@ const AuthCheck: React.FC = ({ children }) => {
       <div className={styles.container}>
         <main className={styles.main}>
           <h1 className={styles.title}>
-            Please <a href="/auth/login">login</a> to continue.
+            Please <Link href="/auth/login">login</Link> to continue.
           </h1>
         </main>
       </div>

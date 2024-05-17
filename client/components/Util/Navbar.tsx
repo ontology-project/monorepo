@@ -1,14 +1,13 @@
-// components/NavBar.tsx
 import React from 'react';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { logout } from '../../utils/util';
 
 interface NavBarProps {
   username: string;
+  logout: any;
 }
 
-const NavBar: React.FC<NavBarProps> = ({ username }) => {
+const NavBar: React.FC<NavBarProps> = ({ username, logout }) => {
   const router = useRouter();
 
   return (
@@ -16,7 +15,7 @@ const NavBar: React.FC<NavBarProps> = ({ username }) => {
       <Text fontSize="lg" fontWeight="bold">Ontology Project</Text>
       <Flex alignItems="center">
         <Text marginRight="8">Welcome, {username}!</Text>
-        <Button colorScheme="teal" variant="outline" onClick={() => logout(router)}>Logout</Button>
+        <Button colorScheme="teal" variant="outline" onClick={logout}>Logout</Button>
       </Flex>
     </Flex>
   );

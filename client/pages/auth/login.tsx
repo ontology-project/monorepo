@@ -14,7 +14,6 @@ import {
   Link,
   Avatar,
   FormControl,
-  FormHelperText,
   InputRightElement
 } from "@chakra-ui/react";
 
@@ -54,7 +53,7 @@ export default function Login() {
   };
 
   return (
-  <Flex
+    <Flex
       flexDirection="column"
       width="100wh"
       height="100vh"
@@ -80,10 +79,9 @@ export default function Login() {
             >
               <FormControl>
                 <InputGroup>
-                  <InputLeftElement
-                    pointerEvents="none"
-                    children={<CFaUserAlt color="gray.300" />}
-                  />
+                  <InputLeftElement pointerEvents="none">
+                    <CFaUserAlt color="gray.300" />
+                  </InputLeftElement>
                   <Input
                     type="text"
                     placeholder="Username"
@@ -95,11 +93,9 @@ export default function Login() {
               </FormControl>
               <FormControl>
                 <InputGroup>
-                  <InputLeftElement
-                    pointerEvents="none"
-                    color="gray.300"
-                    children={<CFaLock color="gray.300" />}
-                  />
+                  <InputLeftElement pointerEvents="none" color="gray.300">
+                    <CFaLock color="gray.300" />
+                  </InputLeftElement>
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
@@ -128,7 +124,7 @@ export default function Login() {
         </Box>
       </Stack>
       <Box>
-        Don't have an account?{" "}
+        Don&apos;t have an account?{" "}
         <Link color="teal.500" href="/auth/signup">
           Sign Up
         </Link>

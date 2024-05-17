@@ -4,12 +4,14 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { customTheme } from "../themes/index";
 import { logout, useAuth } from "../utils/util";
 import NavBar from "../components/Util/Navbar";
+import { useRouter } from "next/router";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const { isLoggedIn, username } = useAuth();
+  const { isLoggedIn, username, updateAuthStatus } = useAuth();
+  const router = useRouter();
   return (
     <ChakraProvider theme={customTheme}>
-      {isLoggedIn && <NavBar username={username} />}
+      {isLoggedIn && <NavBar username={username} logout={() => logout(updateAuthStatus, router)}/>}
       <Component {...pageProps} />
     </ChakraProvider>
   );
