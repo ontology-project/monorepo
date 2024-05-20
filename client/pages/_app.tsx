@@ -3,7 +3,7 @@ import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import { customTheme } from "../themes/index";
 import { logout, useAuth } from "../utils/util";
-import NavBar from "../components/Util/Navbar";
+import NavBar from "../components/Navbar";
 import { useRouter } from "next/router";
 
 function MyApp({ Component, pageProps }: AppProps) {

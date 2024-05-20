@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Box,
   Heading,
@@ -31,30 +31,37 @@ const UploadExcel: React.FC<UploadExcelProps> = () => {
   const [loading, setLoading] = useState(false);
   const [uploadResponse, setUploadResponse] = useState<any>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isUploaded, setIsUploaded] = useState(false);
+  const inputFileRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
       setFile(files[0]);
+      setIsUploaded(false);
     }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (file) {
-      console.log('Uploading file:', file.name);
       setLoading(true);
-
       try {
         const response = await imageApiPost('api/import-excel', file);
         console.log(response);
         setUploadResponse(response);
         setMessage(`Upload success!`);
         onOpen();
+        setIsUploaded(true);
       } catch (error: any) {
         setMessage(error.message);
       } finally {
+        setFile(null);
+        setMessage('');
         setLoading(false);
+        if (inputFileRef.current) {
+          inputFileRef.current.value = '';
+        }
       }
     }
   };
@@ -90,9 +97,10 @@ const UploadExcel: React.FC<UploadExcelProps> = () => {
               accept=".xls,.xlsx"
               onChange={handleFileChange}
               required
+              ref={inputFileRef}
             />
           </FormControl>
-          <Button mt={4} type="submit" disabled={loading}>
+          <Button mt={4} type="submit" disabled={loading || (isUploaded && !file)}>
             {loading ? <Spinner size="sm" /> : 'Submit'}
           </Button>
         </form>
@@ -111,7 +119,7 @@ const UploadExcel: React.FC<UploadExcelProps> = () => {
               )}
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={onClose}>
+              <Button mr={3} onClick={onClose}>
                 Close
               </Button>
             </ModalFooter>
