@@ -36,4 +36,16 @@ export const RELATIONSHIPS = [
     "partOf",
     "ploHasCourse",
     "satisfies"
-]
+];
+
+export const QUERIES = [
+    "Tampilkan daftar CPL (PLO)",
+    "Tampilkan daftar CPL (PLO) dan tampilkan komponen-komponen SN-Dikti-nya",
+    "Tampilkan daftar CPL (PLO) dan tampilkan komponen-komponen KKNI-nya",
+    "Tampilkan daftar CPL (PLO) dan tampilkan aspek-aspek kognitif, afektif dan psikomotorik",
+    "Query 5",
+    "Query 6",
+    "Query 7",
+    "Query 8",
+    "Query 9",
+];
