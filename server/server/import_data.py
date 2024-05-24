@@ -285,14 +285,7 @@ def import_PEO_PLO(excel_file):
                 OPTIONAL {{ 
                     :{plo}  a :ProgramLearningOutcome ;  
                             :label ?oldPEOLabel ;
-                            :hasDomain ?oldDomain ;
-                            :nqfAuthorityResponsibility ?oldNQFAuthorityResp ;
-                            :nqfKnowledge ?oldNQFKnowledge ;
-                            :nqfWorkingSkill ?oldNQFWorkingSkill ;
-                            :nsAttitude ?oldNSAttitude ;
-                            :nsKnowledge ?oldNSKnowledge ;
-                            :nsGenericSkill ?oldNSGenericSkill ;
-                            :nsSpecificSkill ?oldNSSpecificSkill . 
+                            :hasDomain ?oldDomain .
                     }}
             }};
             """
@@ -314,7 +307,6 @@ def import_PEO_PLO(excel_file):
             WHERE {{
                 :{sub_plo}  a :SubProgramLearningOutcome ;
                             :partOf ?oldPLO ;
-                            :nsKnowledge ?oldNSKnowledge ;
                             :hasDomain ?oldDomain .
             }};
             """
@@ -326,6 +318,17 @@ def import_PEO_PLO(excel_file):
                 WHERE {{
                 FILTER EXISTS {{
                     :{sub_plo} a :SubProgramLearningOutcome .
+                    }}
+                }}
+                """
+            else:
+                query_string += f"""
+                INSERT {{
+                    :{plo} :partOf :{peo}
+                }}
+                WHERE {{
+                FILTER EXISTS {{
+                    :{plo} a :ProgramLearningOutcome .
                     }}
                 }}
                 """
@@ -391,8 +394,7 @@ def import_PLO_CLO(excel_file):
                 OPTIONAL {{
                     :{clo}  a :CourseLearningOutcome ;
                             :partOf ?oldPLO ;
-                            :hasDomain ?oldDomain ;
-                            :nsKnowledge ?oldNSKnowledge .
+                            :hasDomain ?oldDomain .
                 }}
             }}
             """

@@ -70,5 +70,12 @@ urlpatterns += [
     url('api/graphdb/update-relationship', GraphDBUpdateNodeWithRelationshipView.as_view()),
     url('api/graphdb/delete-node', GraphDBDeleteNodeView.as_view()),
     # Import Excel endpoint(s)
-    url('api/import-excel', ImportExcelAPIView.as_view())
+    url('api/import-excel', ImportExcelAPIView.as_view()),
+    # GraphDB query
+    url('api/get-plo', GetPLOByCurriculumAPIView.as_view()),
+    url('api/get-sndikti', GetPLOByCurriculumSNDiktiAPIView.as_view()),
+    url('api/get-kkni', GetPLOByCurriculumKKNIAPIView.as_view()),
+    url('api/get-knowledge-cat', GetPLOByCurriculumKnowledgeCategoryAPIView.as_view()),
+    url('api/get-peo-map', GetPEOMapToPLOAPIView.as_view()),
+    url('api/get-curriculum-structure', GetCurriculumStructure.as_view()),
 ]
