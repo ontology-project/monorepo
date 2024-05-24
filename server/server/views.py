@@ -408,7 +408,7 @@ class ImportExcelAPIView(APIView):
 
 class GetPLOByCurriculumAPIView(APIView):
     def get(self, request):
-        curriculum = request.data.get('curriculum')
+        curriculum = request.query_params.get('curriculum')
 
         if not all([curriculum]):
             return Response({'error': 'curriculum field required'}, 
@@ -445,7 +445,7 @@ class GetPLOByCurriculumAPIView(APIView):
 
 class GetPLOByCurriculumSNDiktiAPIView(APIView):
     def get(self, request):
-        curriculum = request.data.get('curriculum')
+        curriculum = request.query_params.get('curriculum')
 
         if not all([curriculum]):
             return Response({'error': 'curriculum field required'}, 
@@ -490,7 +490,7 @@ class GetPLOByCurriculumSNDiktiAPIView(APIView):
         
 class GetPLOByCurriculumKKNIAPIView(APIView):
     def get(self, request):
-        curriculum = request.data.get('curriculum')
+        curriculum = request.query_params.get('curriculum')
 
         if not all([curriculum]):
             return Response({'error': 'curriculum field required'}, 
@@ -534,7 +534,7 @@ class GetPLOByCurriculumKKNIAPIView(APIView):
         
 class GetPLOByCurriculumKnowledgeCategoryAPIView(APIView):
     def get(self, request):
-        curriculum = request.data.get('curriculum')
+        curriculum = request.query_params.get('curriculum')
 
         if not all([curriculum]):
             return Response({'error': 'curriculum field required'}, 
@@ -575,7 +575,7 @@ class GetPLOByCurriculumKnowledgeCategoryAPIView(APIView):
         
 class GetPEOMapToPLOAPIView(APIView):
     def get(self, request):
-        curriculum = request.data.get('curriculum')
+        curriculum = request.query_params.get('curriculum')
 
         if not all([curriculum]):
             return Response({'error': 'curriculum field required'}, 
@@ -614,7 +614,7 @@ class GetPEOMapToPLOAPIView(APIView):
 
 class GetCurriculumStructure(APIView):
     def get(self, request):
-        curriculum = request.data.get('curriculum')
+        curriculum = request.query_params.get('curriculum')
 
         if not all([curriculum]):
             return Response({'error': 'curriculum field required'}, 
