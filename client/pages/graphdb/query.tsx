@@ -1,8 +1,9 @@
-import { Box, Button, Heading, Select, SimpleGrid, Text } from "@chakra-ui/react";
+import { Box, Button, Heading, Select, SimpleGrid, Text, useDisclosure } from "@chakra-ui/react";
 import AuthCheck from "../../components/AuthCheck";
 import { QUERIES } from "../../utils/constants";
 import { apiGet } from "../../utils/api";
 import { useEffect, useState } from "react";
+import DataModal from "../../components/DataModal";
 
 
 interface QueryPageProps {
@@ -11,6 +12,8 @@ interface QueryPageProps {
 const QueryPage: React.FC<QueryPageProps> = () => {
     const [curriculumOptions, setCurriculumOptions] = useState<string[]>();
     const [curriculum, setCurriculum] = useState<string>();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [modalData, setModalData] = useState(null);
 
     useEffect(() => {
         const fetchClasses = async () => {
@@ -28,9 +31,9 @@ const QueryPage: React.FC<QueryPageProps> = () => {
     const handleButtonClick = async (endpoint: string) => {
         try {
           const data = await apiGet(endpoint, { curriculum: curriculum });
-          console.log("data:", data);
+          setModalData(data);
+          onOpen();
         } catch (error: any) {
-          console.error("error!!!", error);
         }
       };
 
@@ -43,6 +46,7 @@ const QueryPage: React.FC<QueryPageProps> = () => {
             <Box padding={10}>
                 <Heading mb={4}>Query Page</Heading>
                 <Text>Select Curriculum</Text>
+                <Text>{curriculum}</Text>
                 <Select mb={4} value={curriculum} onChange={(e) => setCurriculum(e.target.value)}>
                     {curriculumOptions.map((curr) => (
                         <option key={curr} value={curr}>
@@ -60,6 +64,7 @@ const QueryPage: React.FC<QueryPageProps> = () => {
                     ))}
                 </SimpleGrid>
             </Box>
+            <DataModal isOpen={isOpen} onClose={onClose} data={modalData} />
         </AuthCheck>
     )
 }
