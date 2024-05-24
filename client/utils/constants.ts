@@ -1,6 +1,6 @@
 export const BASE_URL = "http://localhost:8000";
 
-export const EXCEL_TEMPLATE_URL = "https://docs.google.com/spreadsheets/d/1kHKhEt1I0E1gFF65KNiVEwYD6WYhkYp-UY0v0PASBGU/edit#gid=786139127";
+export const EXCEL_TEMPLATE_URL = "https://docs.google.com/spreadsheets/d/148SL5KCIAHdQUPKF2dAc5nJ1OTYFgHQ7vNyzaWeGDzc/edit?usp=sharing";
 
 export const NODE_TYPES = [
     'AssesmentTask',

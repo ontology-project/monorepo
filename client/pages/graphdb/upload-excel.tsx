@@ -8,6 +8,7 @@ import {
   Button,
   Link,
   Spinner,
+  Text
 } from '@chakra-ui/react';
 import AuthCheck from '../../components/AuthCheck';
 import { EXCEL_TEMPLATE_URL } from '../../utils/constants';
@@ -31,13 +32,15 @@ const UploadExcel: React.FC = () => {
   return (
     <AuthCheck>
       <Box padding={10}>
-        <Heading mb={4}>Upload Excel File</Heading>
-        <Link href={EXCEL_TEMPLATE_URL} mb={4} color="purple">
-          Use the template provided here
+        <Heading mb={4}>Curriculum File Upload</Heading>
+        <Text>How to use</Text>
+        
+        <Link href={EXCEL_TEMPLATE_URL} mb={4} color="purple" target="_blank">
+          Download the template provided here
         </Link>
         <form onSubmit={handleSubmit}>
           <FormControl mb={4}>
-            <FormLabel>Excel file</FormLabel>
+            <FormLabel>Excel file upload</FormLabel>
             <Input
               padding={1}
               type="file"
@@ -47,7 +50,7 @@ const UploadExcel: React.FC = () => {
               ref={inputFileRef}
             />
           </FormControl>
-          <Button mt={4} type="submit" disabled={loading || (isUploaded && !file)}>
+          <Button type="submit" disabled={loading || (isUploaded && !file)}>
             {loading ? <Spinner size="sm" /> : 'Submit'}
           </Button>
         </form>

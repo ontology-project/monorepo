@@ -47,7 +47,7 @@ const QueryPage: React.FC<QueryPageProps> = () => {
     return (
         <AuthCheck>
             <Box padding={10}>
-                <Heading mb={4}>Query Page</Heading>
+                <Heading mb={4}>Queries for Curriculum Review</Heading>
                 <Text>Select Curriculum</Text>
                 <Select mb={4} value={curriculum} onChange={(e) => setCurriculum(e.target.value)}>
                     {curriculumOptions.map((curr) => (

@@ -12,7 +12,7 @@ const NavBar: React.FC<NavBarProps> = ({ username, logout }) => {
 
   return (
     <Flex bg="purple.500" color="white" padding="4" justifyContent="space-between" alignItems="center">
-      <Text fontSize="lg" fontWeight="bold">Ontology Project</Text>
+      <Text fontSize="lg" fontWeight="bold">Outcome Based Curriculum Ontology Project</Text>
       <Flex alignItems="center">
         <Link marginRight="8" href="/graphdb/query">Query</Link>
         <Link marginRight="8" href="/graphdb/upload-excel">Upload Excel</Link>
