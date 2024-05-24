@@ -16,16 +16,19 @@ const QueryPage: React.FC<QueryPageProps> = () => {
     const [modalData, setModalData] = useState(null);
 
     useEffect(() => {
-        const fetchClasses = async () => {
+        const fetchCurriculums = async () => {
           try {
             const data = await apiGet('api/graphdb/get-curriculums');
-            setCurriculumOptions(data.curriculums);  
+            setCurriculumOptions(data.curriculums); 
+            if (data.curriculums.length > 0) {
+                setCurriculum(data.curriculums[0]);
+            } 
           } catch (error: any) {
             console.log("error fetching curriculums", error)
           }
         };
       
-        fetchClasses();
+        fetchCurriculums();
       }, []);
 
     const handleButtonClick = async (endpoint: string) => {
@@ -46,7 +49,6 @@ const QueryPage: React.FC<QueryPageProps> = () => {
             <Box padding={10}>
                 <Heading mb={4}>Query Page</Heading>
                 <Text>Select Curriculum</Text>
-                <Text>{curriculum}</Text>
                 <Select mb={4} value={curriculum} onChange={(e) => setCurriculum(e.target.value)}>
                     {curriculumOptions.map((curr) => (
                         <option key={curr} value={curr}>
