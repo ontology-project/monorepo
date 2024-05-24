@@ -14,7 +14,7 @@ const QueryPage: React.FC<QueryPageProps> = () => {
                 <Heading mb={4}>Query Page</Heading>
                 <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
                     {QUERIES.map((query, index) => (
-                        <Button key={index} size="lg">
+                        <Button key={index} size="lg" padding={8}>
                             <Text noOfLines={3} wordBreak="break-word" whiteSpace="normal">
                                 {query}
                             </Text>
