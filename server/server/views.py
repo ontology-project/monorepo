@@ -139,6 +139,34 @@ class GraphDBGetObjectPropertiesView(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+class GraphDBGetCurriculumsView(APIView):
+    def get(self, request):
+        query_string = f"""
+        PREFIX : <{PREFIX}> 
+        PREFIX owl: <{OWL}>
+
+        SELECT ?curriculum
+        WHERE {{
+          ?curriculum rdf:type :Curriculum .
+        }}
+        """
+
+        sparql = SPARQLWrapper(GRAPHDB_GET) 
+        sparql.setQuery(query_string)
+        sparql.setReturnFormat(JSON)
+        sparql.setMethod("POST")
+
+        print("sparqql", sparql)
+
+        try:
+            results = sparql.queryAndConvert()
+            curriculums = [clean_response(result["curriculum"]["value"]) for result in results["results"]["bindings"]]
+            return Response({'curriculums': curriculums})
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GraphDBGetNodeView(APIView):
     def get(self, request):
