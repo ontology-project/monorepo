@@ -2,9 +2,12 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import AuthCheck from '../components/AuthCheck'
+import { useAuth } from '../utils/util'
 
 
 const Home: NextPage = () => {
+  const { isKaprodi } = useAuth();
+
   return (
     <AuthCheck>
       <div className={styles.container}>
@@ -15,9 +18,8 @@ const Home: NextPage = () => {
         </Head>
 
         <main className={styles.main}>
-          <h1 className={styles.title}>
-            Check your <a href="graphdb/upload-excel">curriculum</a> now.
-          </h1>
+          {isKaprodi && <h1 className={styles.title}>Upload your <a href="graphdb/upload-excel">curriculum</a> now.</h1>}
+          {!isKaprodi && <h1 className={styles.title}>Review your <a href="graphdb/query">curriculum</a> now.</h1>}
         </main>
       </div>
     </AuthCheck>

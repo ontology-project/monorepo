@@ -12,7 +12,7 @@
   
     return (
       <ChakraProvider theme={customTheme}>
-        {isLoggedIn && <NavBar username={username} logout={() => logout(updateAuthStatus, router)} />}
+        {isLoggedIn && <NavBar username={username} isKaprodi={isKaprodi} logout={() => logout(updateAuthStatus, router)} />}
         <Component {...pageProps}/>
       </ChakraProvider>
     );
