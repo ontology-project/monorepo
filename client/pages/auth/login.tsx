@@ -42,9 +42,12 @@ export default function Login() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${BASE_URL}/auth/jwt/create/`, credentials);
-      localStorage.setItem('authToken', response.data.access);
-      localStorage.setItem('username', credentials.username);
+      const response = await axios.post(`${BASE_URL}/user/jwt/create/`, credentials);
+      const { access, refresh, user } = response.data;
+      localStorage.setItem('authToken', access);
+      localStorage.setItem('refreshToken', refresh);
+      localStorage.setItem('username', user.username);
+      localStorage.setItem('isKaprodi', user.is_kaprodi);
       router.push('/');
     } catch (error) {
       console.error('Login error:', error);

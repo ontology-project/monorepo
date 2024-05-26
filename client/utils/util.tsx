@@ -3,41 +3,47 @@ import { useEffect, useRef, useState } from "react";
 import { imageApiPost } from "./api";
 
 export function useAuth() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [username, setUsername] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
+  const [isKaprodi, setIsKaprodi] = useState(false);
 
-    const updateAuthStatus = () => {
-        const token = localStorage.getItem('authToken');
-        const user = localStorage.getItem('username');
-        if (token && user) {
-            setIsLoggedIn(true);
-            setUsername(user);
-        } else {
-            setIsLoggedIn(false);
-            setUsername("");
-        }
-    };
+  const updateAuthStatus = () => {
+      const token = localStorage.getItem('authToken');
+      const user = localStorage.getItem('username');
+      const isKaprodi = localStorage.getItem('isKaprodi') === 'true';
 
-    useEffect(() => {
-        updateAuthStatus();
+      if (token && user) {
+          setIsLoggedIn(true);
+          setUsername(user);
+          setIsKaprodi(isKaprodi);
+      } else {
+          setIsLoggedIn(false);
+          setUsername("");
+          setIsKaprodi(false);
+      }
+  };
 
-        const handleStorageChange = () => {
-            updateAuthStatus();
-        };
+  useEffect(() => {
+      updateAuthStatus();
 
-        window.addEventListener('storage', handleStorageChange);
+      const handleStorageChange = () => {
+          updateAuthStatus();
+      };
 
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-        };
-    }, []);
+      window.addEventListener('storage', handleStorageChange);
 
-    return { isLoggedIn, username, updateAuthStatus };
+      return () => {
+          window.removeEventListener('storage', handleStorageChange);
+      };
+  }, []);
+
+  return { isLoggedIn, username, isKaprodi, updateAuthStatus };
 }
 
 export function logout(updateAuthStatus: () => void, router: NextRouter) {
     localStorage.removeItem('authToken');
     localStorage.removeItem('username');
+    localStorage.removeItem('isKaprodi');
     updateAuthStatus();
     router.push('/auth/login');
 }

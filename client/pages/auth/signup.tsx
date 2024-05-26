@@ -14,8 +14,8 @@ import {
   Link,
   Avatar,
   FormControl,
-  FormHelperText,
-  InputRightElement
+  InputRightElement,
+  Checkbox
 } from "@chakra-ui/react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { BASE_URL } from '../../utils/constants';
@@ -23,18 +23,23 @@ import { BASE_URL } from '../../utils/constants';
 interface Credentials {
   username: string;
   password: string;
+  is_kaprodi: boolean;
 }
 
 const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
 
 export default function Signup() {
-  const [credentials, setCredentials] = useState<Credentials>({ username: '', password: '' });
+  const [credentials, setCredentials] = useState<Credentials>({ username: '', password: '', is_kaprodi: false });
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setCredentials(prevCredentials => ({
+      ...prevCredentials,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   };
 
   const handleShowClick = () => setShowPassword(!showPassword);
@@ -42,7 +47,7 @@ export default function Signup() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post(`${BASE_URL}/auth/users/`, credentials);
+      await axios.post(`${BASE_URL}/user/auth/users/`, credentials);
       alert('Signup successful!');
       router.push('/auth/login');
     } catch (error: any) {
@@ -51,7 +56,11 @@ export default function Signup() {
         let errors = error.response.data;
         let errorMessages = [];
         for (let key in errors) {
-          errorMessages.push(`${key}: ${errors[key].join(', ')}`);
+          if (Array.isArray(errors[key])) {
+            errorMessages.push(`${key}: ${errors[key].join(', ')}`);
+          } else {
+            errorMessages.push(`${key}: ${errors[key]}`);
+          }
         }
         alert('Signup failed! ' + errorMessages.join('\n'));
       } else {
@@ -120,6 +129,11 @@ export default function Signup() {
                     </Button>
                   </InputRightElement>
                 </InputGroup>
+              </FormControl>
+              <FormControl>
+                <Checkbox name="is_kaprodi" isChecked={credentials.is_kaprodi} onChange={handleChange}>
+                  Register as Kaprodi
+                </Checkbox>
               </FormControl>
               <Button
                 borderRadius={0}
