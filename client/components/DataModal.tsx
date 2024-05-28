@@ -27,6 +27,7 @@ const DataModal: React.FC<DataModalProps> = ({ isOpen, onClose, data }) => {
         <ModalHeader>Query Results</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
+          <Text mb={4}>{data?.success}</Text>
           {data && data.properties && data.properties.length > 0 ? (
             data.properties.map((property, index) => (
               <Box key={index} mb={4}>

@@ -21,7 +21,7 @@ import {
   const renderUnimportedRows = (unimported: any) => {
     return Object.keys(unimported).map(sheet => (
       <Box key={sheet} mt={4}>
-        <Text fontWeight="bold">{sheet}:</Text>
+        <Text fontWeight="bold">Sheet {sheet}:</Text>
         {unimported[sheet].length === 0 ? (
           <Text>No unimported rows</Text>
         ) : (

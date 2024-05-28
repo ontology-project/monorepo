@@ -33,8 +33,6 @@ const UploadExcel: React.FC = () => {
     <AuthCheck>
       <Box padding={10}>
         <Heading mb={4}>Curriculum File Upload</Heading>
-        <Text>How to use</Text>
-        
         <Link href={EXCEL_TEMPLATE_URL} mb={4} color="purple" target="_blank">
           Download the template provided here
         </Link>
