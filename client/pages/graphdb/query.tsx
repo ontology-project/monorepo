@@ -5,6 +5,7 @@ import { apiGet } from "../../utils/api";
 import { useEffect, useState } from "react";
 import DataModal from "../../components/DataModal";
 import { QueryApiResponse } from "../../utils/types";
+import { useRouter } from "next/router";
 
 
 interface QueryPageProps {
@@ -15,6 +16,13 @@ const QueryPage: React.FC<QueryPageProps> = () => {
     const [curriculum, setCurriculum] = useState<string>();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [modalData, setModalData] = useState<QueryApiResponse | null>(null);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (localStorage.getItem('isKaprodi') === 'true') {
+        router.push('/');
+        }
+    }, [router]);
 
     useEffect(() => {
         const fetchCurriculums = async () => {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Heading,
@@ -14,6 +14,7 @@ import AuthCheck from '../../components/AuthCheck';
 import { EXCEL_TEMPLATE_URL } from '../../utils/constants';
 import UploadResultModal from '../../components/UploadResultModal';
 import { useFileUpload } from '../../utils/util';
+import { useRouter } from 'next/router';
 
 
 const UploadExcel: React.FC = () => {
@@ -28,6 +29,13 @@ const UploadExcel: React.FC = () => {
     handleSubmit,
     setUploadResponse,
   } = useFileUpload();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (localStorage.getItem('isKaprodi') === 'false') {
+      router.push('/');
+    }
+  }, [router]);
 
   return (
     <AuthCheck>
