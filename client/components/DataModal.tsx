@@ -1,6 +1,25 @@
 import { Text, Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from "@chakra-ui/react";
+import { QueryApiResponse } from "../utils/types";
+import { keyMappings } from "../utils/keyMappings";
 
-const DataModal = ({ isOpen, onClose, data }) => {
+interface DataModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  data: QueryApiResponse | null;
+}
+
+const DataModal: React.FC<DataModalProps> = ({ isOpen, onClose, data }) => {
+  const getDisplayKey = (key: string) => {
+    return keyMappings[key] || key;
+  };
+
+  const getDisplayValue = (value: string) => {
+    if (value === 'NO_RELATION') {
+      return "No Relationship";
+    }
+    return value;
+  };
+  
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -12,7 +31,7 @@ const DataModal = ({ isOpen, onClose, data }) => {
             data.properties.map((property, index) => (
               <Box key={index} mb={4}>
                 {Object.entries(property).map(([key, value]) => (
-                  <Text key={key}><strong>{key}:</strong> {value}</Text>
+                  <Text key={key}><strong>{getDisplayKey(key)}:</strong> {getDisplayValue(value)}</Text>
                 ))}
               </Box>
             ))

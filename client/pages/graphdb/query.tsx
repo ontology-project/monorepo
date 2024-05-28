@@ -4,6 +4,7 @@ import { QUERIES } from "../../utils/constants";
 import { apiGet } from "../../utils/api";
 import { useEffect, useState } from "react";
 import DataModal from "../../components/DataModal";
+import { QueryApiResponse } from "../../utils/types";
 
 
 interface QueryPageProps {
@@ -13,7 +14,7 @@ const QueryPage: React.FC<QueryPageProps> = () => {
     const [curriculumOptions, setCurriculumOptions] = useState<string[]>();
     const [curriculum, setCurriculum] = useState<string>();
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [modalData, setModalData] = useState(null);
+    const [modalData, setModalData] = useState<QueryApiResponse | null>(null);
 
     useEffect(() => {
         const fetchCurriculums = async () => {
@@ -33,7 +34,7 @@ const QueryPage: React.FC<QueryPageProps> = () => {
 
     const handleButtonClick = async (endpoint: string) => {
         try {
-          const data = await apiGet(endpoint, { curriculum: curriculum });
+          const data: QueryApiResponse = await apiGet(endpoint, { curriculum: curriculum });
           setModalData(data);
           onOpen();
         } catch (error: any) {
