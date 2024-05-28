@@ -15,11 +15,12 @@ import {
   Avatar,
   FormControl,
   InputRightElement,
-  Checkbox
+  Tab,
+  TabList,
+  Tabs,
 } from "@chakra-ui/react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { BASE_URL } from '../../utils/constants';
-import RegisterSwitch from '../../components/RegisterSwitch';
 
 interface Credentials {
   username: string;
@@ -31,15 +32,23 @@ const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
 
 export default function Signup() {
-  const [credentials, setCredentials] = useState<Credentials>({ username: '', password: '', is_kaprodi: false });
+  const [credentials, setCredentials] = useState<Credentials>({ username: '', password: '', is_kaprodi: true });
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setCredentials(prevCredentials => ({
       ...prevCredentials,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: value,
+    }));
+  };
+
+  const handleRoleChange = (index: number) => {
+    const is_kaprodi = index === 0;
+    setCredentials(prevCredentials => ({
+      ...prevCredentials,
+      is_kaprodi: is_kaprodi,
     }));
   };
 
@@ -48,6 +57,7 @@ export default function Signup() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
+      console.log("creds", credentials)
       await axios.post(`${BASE_URL}/user/auth/users/`, credentials);
       alert('Signup successful!');
       router.push('/auth/login');
@@ -131,7 +141,14 @@ export default function Signup() {
                   </InputRightElement>
                 </InputGroup>
               </FormControl>
-              <RegisterSwitch />
+              <Box>
+                <Tabs index={credentials.is_kaprodi ? 0 : 1} onChange={handleRoleChange} variant="soft-rounded">
+                  <TabList>
+                    <Tab flex="1" textAlign="center">Kaprodi</Tab>
+                    <Tab flex="1" textAlign="center">Reviewer</Tab>
+                  </TabList>
+                </Tabs>
+              </Box>
               <Button
                 borderRadius={0}
                 type="submit"
