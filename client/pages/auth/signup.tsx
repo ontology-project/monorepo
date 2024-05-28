@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { BASE_URL } from '../../utils/constants';
+import RegisterSwitch from '../../components/RegisterSwitch';
 
 interface Credentials {
   username: string;
@@ -130,11 +131,7 @@ export default function Signup() {
                   </InputRightElement>
                 </InputGroup>
               </FormControl>
-              <FormControl>
-                <Checkbox name="is_kaprodi" isChecked={credentials.is_kaprodi} onChange={handleChange}>
-                  Register as Kaprodi
-                </Checkbox>
-              </FormControl>
+              <RegisterSwitch />
               <Button
                 borderRadius={0}
                 type="submit"
