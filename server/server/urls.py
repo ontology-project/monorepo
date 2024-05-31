@@ -80,4 +80,6 @@ urlpatterns += [
     url('api/get-knowledge-cat', GetPLOByCurriculumKnowledgeCategoryAPIView.as_view()),
     url('api/get-peo-map', GetPEOMapToPLOAPIView.as_view()),
     url('api/get-curriculum-structure', GetCurriculumStructure.as_view()),
+    url('api/get-course-plo-map', GetCoursePLOMapApiView.as_view()),
+    url('api/get-course-plo-clo-map', GetCoursePLOCLOMapApiView.as_view())
 ]

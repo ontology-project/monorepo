@@ -219,7 +219,7 @@ def import_PEO_PLO(excel_file):
         learning_domain = str(row['Learning Domain']) if str(row['Learning Domain']) != "nan" else ""
         knowledge_cat = str(row['Knowledge Category']) if str(row['Knowledge Category']) != "nan" else ""
         course_code = str(row['Course Code']) if str(row['Course Code']) != "nan" else ""
-        label = str(row['Description']) if str(row['Description']) != "nan" else ""
+        description = str(row['Description']) if str(row['Description']) != "nan" else ""
         nqf_authority_responsibility = str(row['KKNI wewenang dan tanggung jawab']) if str(row['KKNI wewenang dan tanggung jawab']) != "nan" else ""
         nqf_knowledge = str(row['KKNI pengetahuan']) if str(row['KKNI pengetahuan']) != "nan" else ""
         nqf_working_skill = str(row['KKNI keterampilan kerja']) if str(row['KKNI keterampilan kerja']) != "nan" else ""
@@ -230,7 +230,7 @@ def import_PEO_PLO(excel_file):
 
         
 
-        if not all([peo, plo, sub_plo, rel, learning_domain, knowledge_cat, course_code, label, nqf_authority_responsibility, nqf_knowledge,
+        if not all([peo, plo, sub_plo, rel, learning_domain, knowledge_cat, course_code, description, nqf_authority_responsibility, nqf_knowledge,
                     nqf_working_skill, ns_attitude, ns_generic_skill, ns_specific_skill]):
             error_list.append(index+2)
             continue
@@ -271,7 +271,7 @@ def import_PEO_PLO(excel_file):
             INSERT {{
                 :{plo}  a :ProgramLearningOutcome ;
                         :partOf :{peo} ;
-                        :label "{label}" ;
+                        :label "{description}" ;
                         :nqfAuthorityResponsibility "{nqf_authority_responsibility}";
                         :nqfKnowledge "{nqf_knowledge}";
                         :nqfWorkingSkill "{nqf_working_skill}" ;
@@ -301,6 +301,7 @@ def import_PEO_PLO(excel_file):
             INSERT {{
                 :{sub_plo}  a :SubProgramLearningOutcome ;
                             :partOf :{plo} ;
+                            :label "{description}" ;
                             :nsKnowledge "{knowledge_cat}" ;
                             :hasDomain :{learning_domain} .
             }}
@@ -353,6 +354,7 @@ def import_PLO_CLO(excel_file):
     for index, row in df.iterrows():
         plo = str(row['PLO']) if str(row['PLO']) != "nan" else ""
         clo = str(row['CLO']) if str(row['CLO']) != "nan" else ""
+        description = str(row['Description']) if str(row['Description']) != "nan" else ""
         learning_domain = str(row['Learning Domain']) if str(row['Learning Domain']) != "nan" else ""
         knowledge_cat = str(row['Knowledge Category']) if str(row['Knowledge Category']) != "nan" else ""
 
@@ -380,12 +382,14 @@ def import_PLO_CLO(excel_file):
 
             DELETE {{
                 :{clo}  a :CourseLearningOutcome ;
+                        :label ?oldDescription ;
                         :partOf ?oldPLO ;
                         :hasDomain ?oldDomain ;
                         :nsKnowledge ?oldNSKnowledge .
             }}
             INSERT {{
                 :{clo}  a :CourseLearningOutcome ;
+                        :label "{description}" ;
                         :partOf :{plo} ;
                         :hasDomain :{learning_domain} ;
                         :nsKnowledge "{knowledge_cat}" .
@@ -419,6 +423,7 @@ def import_CLO_ULO(excel_file):
     for index, row in df.iterrows():
         clo = str(row['CLO']) if str(row['CLO']) != "nan" else ""
         ulo = str(row['ULO']) if str(row['ULO']) != "nan" else ""
+        description = str(row['Description']) if str(row['Description']) != "nan" else ""
         learning_domain = str(row['Learning Domain']) if str(row['Learning Domain']) != "nan" else ""
         knowledge_cat = str(row['Knowledge Category']) if str(row['Knowledge Category']) != "nan" else ""
 
@@ -447,12 +452,14 @@ def import_CLO_ULO(excel_file):
             DELETE {{
                 :{ulo}  a :UnitLearningOutcome ;
                         :partOf ?oldCLO ;
+                        :label ?oldDescription ;
                         :hasDomain ?oldDomain ;
                         :nsKnowledge ?oldNSKnowledge .
             }}
             INSERT {{
                 :{ulo}  a :UnitLearningOutcome ;
                         :partOf :{clo} ;
+                        :label "{description}" ;
                         :hasDomain :{learning_domain} ;
                         :nsKnowledge "{knowledge_cat}" .
             }}
@@ -775,6 +782,69 @@ def import_course_content(excel_file):
             WHERE {{
                 FILTER NOT EXISTS {{
                     :{course} :coversContent :{content} .
+                }}
+            }}
+            """
+
+        sparql = SPARQLWrapper(GRAPHDB_POST) 
+        sparql.setQuery(query_string)
+        sparql.setReturnFormat(JSON)
+        sparql.setMethod("POST")
+
+        print("sparqql", query_string)
+
+        sparql.queryAndConvert()
+        
+    return error_list
+
+def import_content_knowledgecat(excel_file):
+    error_list = []
+
+    # Transform data to dataframe pandas
+    df = pd.read_excel(excel_file,sheet_name='Content_KnowledgeCat') # sheet_name = Sheet seq. number on excel/Sheet name
+
+    for index, row in df.iterrows():
+        content = str(row['Content']) if str(row['Content']) != "nan" else ""
+        know_cat = str(row['Knowledge Category']) if str(row['Knowledge Category']) != "nan" else ""
+
+
+        if not all([content, know_cat]):
+            error_list.append(index+2)
+            continue
+        
+        content = clean_cell(content)
+        know_cat = clean_cell(know_cat)
+        
+
+        query_string = f"""
+            PREFIX : <{PREFIX}>
+            PREFIX owl: <{OWL}>
+            PREFIX rdf: <{RDF}>
+
+            INSERT {{
+                :{content} a :Content .
+            }} 
+            WHERE {{
+                FILTER NOT EXISTS {{
+                    :{content} a :Content .
+                }}
+            }};
+
+            INSERT {{
+                :{know_cat}  a :KnowledgeCategory .
+            }}
+            WHERE {{
+                FILTER NOT EXISTS {{
+                    :{know_cat} a :KnowledgeCategory .
+                }}
+            }};
+
+            INSERT {{
+                :{content} :hasKnowCat :{know_cat} .
+            }}
+            WHERE {{
+                FILTER NOT EXISTS {{
+                    :{content} :hasKnowCat :{know_cat} .
                 }}
             }}
             """
