@@ -1,14 +1,17 @@
-import { Text, Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import { Text, Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Table, Thead, Tbody, Tr, Th, Td, Flex } from "@chakra-ui/react";
 import { QueryApiResponse } from "../utils/types";
 import { keyMappings, valueMappings } from "../utils/keyMappings";
+import ReviewForm from "./ReviewForm";
 
 interface DataModalProps {
   isOpen: boolean;
   onClose: () => void;
   data: QueryApiResponse | null;
+  query: string;
+  curriculum: string;
 }
 
-const DataModal: React.FC<DataModalProps> = ({ isOpen, onClose, data }) => {
+const DataModal: React.FC<DataModalProps> = ({ isOpen, onClose, data, query, curriculum }) => {
   const getDisplayKey = (key: string) => {
     return keyMappings[key] || key;
   };
@@ -51,7 +54,12 @@ const DataModal: React.FC<DataModalProps> = ({ isOpen, onClose, data }) => {
           )}
         </ModalBody>
         <ModalFooter>
-          <Button mr={3} onClick={onClose}>Close</Button>
+          <Flex w="full" align="center">
+            <Box flex="1" mr={4}>
+              <ReviewForm query={query} curriculum={curriculum} />
+            </Box>
+            <Button onClick={onClose}>Close</Button>
+          </Flex>
         </ModalFooter>
       </ModalContent>
     </Modal>

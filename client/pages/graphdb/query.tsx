@@ -13,10 +13,11 @@ interface QueryPageProps {
 
 const QueryPage: React.FC<QueryPageProps> = () => {
     const [curriculumOptions, setCurriculumOptions] = useState<string[]>();
-    const [curriculum, setCurriculum] = useState<string>();
+    const [curriculum, setCurriculum] = useState<string>("");
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [modalData, setModalData] = useState<QueryApiResponse | null>(null);
     const router = useRouter();
+    const [query, setQuery] = useState<string>("");
 
     useEffect(() => {
         if (localStorage.getItem('isKaprodi') === 'true') {
@@ -40,10 +41,11 @@ const QueryPage: React.FC<QueryPageProps> = () => {
         fetchCurriculums();
       }, []);
 
-    const handleButtonClick = async (endpoint: string) => {
+    const handleButtonClick = async (query: any) => {
         try {
-          const data: QueryApiResponse = await apiGet(endpoint, { curriculum: curriculum });
+          const data: QueryApiResponse = await apiGet(query.endpoint, { curriculum: curriculum });
           setModalData(data);
+          setQuery(query.success)
           onOpen();
         } catch (error: any) {
         }
@@ -67,7 +69,7 @@ const QueryPage: React.FC<QueryPageProps> = () => {
                 </Select>
                 <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
                     {QUERIES.map((query, index) => (
-                        <Button key={index} size="lg" padding={8} onClick={() => handleButtonClick(query.endpoint)}>
+                        <Button key={index} size="lg" padding={8} onClick={() => handleButtonClick(query)}>
                             <Text noOfLines={3} wordBreak="break-word" whiteSpace="normal">
                                 {query.text}
                             </Text>
@@ -75,7 +77,7 @@ const QueryPage: React.FC<QueryPageProps> = () => {
                     ))}
                 </SimpleGrid>
             </Box>
-            <DataModal isOpen={isOpen} onClose={onClose} data={modalData} />
+            <DataModal isOpen={isOpen} onClose={onClose} data={modalData} query={query} curriculum={curriculum} />
         </AuthCheck>
     )
 }
