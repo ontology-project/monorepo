@@ -1,4 +1,4 @@
-import { Text, Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from "@chakra-ui/react";
+import { Text, Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 import { QueryApiResponse } from "../utils/types";
 import { keyMappings, valueMappings } from "../utils/keyMappings";
 
@@ -18,7 +18,7 @@ const DataModal: React.FC<DataModalProps> = ({ isOpen, onClose, data }) => {
   };
   
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Query Results</ModalHeader>
@@ -26,13 +26,26 @@ const DataModal: React.FC<DataModalProps> = ({ isOpen, onClose, data }) => {
         <ModalBody>
           <Text mb={4}>{data?.success}</Text>
           {data && data.properties && data.properties.length > 0 ? (
-            data.properties.map((property, index) => (
-              <Box key={index} mb={4}>
-                {Object.entries(property).map(([key, value]) => (
-                  <Text key={key}><strong>{getDisplayKey(key)}:</strong> {getDisplayValue(value)}</Text>
-                ))}
-              </Box>
-            ))
+            <Box overflowX="auto">
+              <Table variant="simple">
+                <Thead>
+                  <Tr>
+                    {Object.keys(data.properties[0]).map((key) => (
+                      <Th key={key}>{getDisplayKey(key)}</Th>
+                    ))}
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {data.properties.map((property, index) => (
+                    <Tr key={index}>
+                      {Object.entries(property).map(([key, value]) => (
+                        <Td key={key}>{getDisplayValue(value)}</Td>
+                      ))}
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </Box>
           ) : (
             <Text>No properties found.</Text>
           )}

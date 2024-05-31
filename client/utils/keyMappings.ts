@@ -17,6 +17,6 @@ export const keyMappings: { [key: string]: string } = {
 };
 
 export const valueMappings: { [key: string]: string} = {
-  NO_RELATION: "No Relationship",
-  NO_COURSE: "No Course"
+  NO_RELATION: "❌",
+  NO_COURSE: "❌"
 };
