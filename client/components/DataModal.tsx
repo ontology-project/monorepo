@@ -1,6 +1,6 @@
 import { Text, Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from "@chakra-ui/react";
 import { QueryApiResponse } from "../utils/types";
-import { keyMappings } from "../utils/keyMappings";
+import { keyMappings, valueMappings } from "../utils/keyMappings";
 
 interface DataModalProps {
   isOpen: boolean;
@@ -14,10 +14,7 @@ const DataModal: React.FC<DataModalProps> = ({ isOpen, onClose, data }) => {
   };
 
   const getDisplayValue = (value: string) => {
-    if (value === 'NO_RELATION') {
-      return "No Relationship";
-    }
-    return value;
+    return valueMappings[value] || value;
   };
   
   return (

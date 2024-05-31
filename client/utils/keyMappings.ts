@@ -13,3 +13,8 @@ export const keyMappings: { [key: string]: string } = {
   kkni_workskill: "KKNI Work Skill",
   domain: "Domain"
 };
+
+export const valueMappings: { [key: string]: string} = {
+  NO_RELATION: "No Relationship",
+  NO_COURSE: "No Course"
+};
