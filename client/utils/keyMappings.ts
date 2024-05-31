@@ -1,9 +1,11 @@
 export const keyMappings: { [key: string]: string } = {
   plo: "PLO",
   peo: "PEO",
+  clo: "CLO",
   hasPLORel: "Has PLO Relationship",
   hasCLORel: "Has CLO Relationship",
   hasULORel: "Has ULO Relationship",
+  hasCourse: "Has Course",
   sndikti_attitude: "SN Dikti Attitude",
   sndikti_genericskill: "SN Dikti Generic Skill",
   sndikti_knowledge: "SN Dikti Knowledge",

@@ -43,8 +43,8 @@ export const QUERIES = [
     { text: "Tampilkan daftar CPL (PLO) dan tampilkan komponen-komponen SN-Dikti-nya", endpoint: "/api/get-sndikti" },
     { text: "Tampilkan daftar CPL (PLO) dan tampilkan komponen-komponen KKNI-nya", endpoint: "/api/get-kkni" },
     { text: "Tampilkan daftar CPL (PLO) dan tampilkan aspek-aspek kognitif, afektif dan psikomotorik", endpoint: "/api/get-knowledge-cat" },
-    { text: "Tunjukkan PEO yang tidak dipetakan ke PLO", endpoint: "/api/get-peo-map" },
+    { text: "Tunjukkan pemetaan PEO ke PLO", endpoint: "/api/get-peo-map" },
     { text: "Tampilkan struktur kurikulum", endpoint: "/api/get-curriculum-structure" },
-    { text: "Tampilkan pemetaan PLO", endpoint: "/api/get-course-plo-map"},
-    { text: "Tampilkan pemetaan PLO CLO", endpoint: "/api/get-course-plo-clo-map"}
+    { text: "Tampilkan pemetaan PLO ke Mata Kuliah", endpoint: "/api/get-course-plo-map"},
+    { text: "Tampilkan pemetaan CLO ke Mata Kuliah", endpoint: "/api/get-course-plo-clo-map"}
 ];
