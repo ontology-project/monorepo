@@ -39,12 +39,12 @@ export const RELATIONSHIPS = [
 ];
 
 export const QUERIES = [
-    { text: "Tampilkan daftar CPL (PLO)", endpoint: "/api/get-plo" },
-    { text: "Tampilkan daftar CPL (PLO) dan tampilkan komponen-komponen SN-Dikti-nya", endpoint: "/api/get-sndikti" },
-    { text: "Tampilkan daftar CPL (PLO) dan tampilkan komponen-komponen KKNI-nya", endpoint: "/api/get-kkni" },
-    { text: "Tampilkan daftar CPL (PLO) dan tampilkan aspek-aspek kognitif, afektif dan psikomotorik", endpoint: "/api/get-knowledge-cat" },
-    { text: "Tunjukkan pemetaan PEO ke PLO", endpoint: "/api/get-peo-map" },
-    { text: "Tampilkan struktur kurikulum", endpoint: "/api/get-curriculum-structure" },
-    { text: "Tampilkan pemetaan PLO ke Mata Kuliah", endpoint: "/api/get-course-plo-map"},
-    { text: "Tampilkan pemetaan CLO ke Mata Kuliah", endpoint: "/api/get-course-plo-clo-map"}
+    { text: "PLO (Program Learning Outcomes)", endpoint: "/api/get-plo" },
+    { text: "PLO and the SNDikti components", endpoint: "/api/get-sndikti" },
+    { text: "PLO and the KKNI components", endpoint: "/api/get-kkni" },
+    { text: "PLO and Cognitive, Affective, Psychomotoric Domains", endpoint: "/api/get-knowledge-cat" },
+    { text: "PEO (Program Educational Objectives) to PLO Mapping", endpoint: "/api/get-peo-map" },
+    { text: "Curriculum Structure", endpoint: "/api/get-curriculum-structure" },
+    { text: "PLO to Course Mapping", endpoint: "/api/get-course-plo-map"},
+    { text: "CLO (Course Learning Outcomes) to Course Mapping", endpoint: "/api/get-course-plo-clo-map"}
 ];
