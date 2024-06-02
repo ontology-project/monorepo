@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
-import { Box, Button, FormControl, FormLabel, Input, Textarea, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Textarea, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } from '@chakra-ui/react';
 
 interface ReviewFormProps {
   query: string;
   curriculum: string;
-  onSubmit: (review: { query: string; comment: string; rating: number }) => void;
+  onSubmit: (review: { query: string; curriculum: string; comment: string; rating: number }) => void;
 }
 
-const ReviewForm: React.FC<ReviewFormProps> = ({ query, onSubmit }) => {
+const ReviewForm: React.FC<ReviewFormProps> = ({ query, curriculum, onSubmit }) => {
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ query, comment, rating });
+    onSubmit({ query, curriculum, comment, rating });
   };
 
   return (
-    <Box maxW="sm" borderWidth="1px" borderRadius="lg" p={4}>
+    <Box borderWidth="1px" borderRadius="lg" p={4}>
       <form onSubmit={handleSubmit}>
-        <FormControl id="comment" mb={4}>
-          <FormLabel>Review</FormLabel>
+        <FormControl id="comment" mb={2}>
+          <FormLabel fontSize="sm">Review</FormLabel>
           <Textarea
             placeholder="Write your review here..."
             value={comment}
@@ -28,8 +28,8 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ query, onSubmit }) => {
           />
         </FormControl>
 
-        <FormControl id="rating" mb={4}>
-          <FormLabel>Rating</FormLabel>
+        <FormControl id="rating" mb={2}>
+          <FormLabel fontSize="sm">Rating</FormLabel>
           <NumberInput
             min={0}
             max={4}
@@ -44,7 +44,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ query, onSubmit }) => {
           </NumberInput>
         </FormControl>
 
-        <Button type="submit">
+        <Button type="submit" width="full" mt={2}>
           Submit Review
         </Button>
       </form>

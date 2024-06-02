@@ -39,7 +39,6 @@ export const imageApiPost = async (path: string, data: any) => {
 export const apiGet = async (path: string, params: any = {}) => {
   try {
     const response = await instance.get(path, { params });
-    console.log('resss', response.data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {

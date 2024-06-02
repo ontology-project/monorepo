@@ -45,7 +45,7 @@ const QueryPage: React.FC<QueryPageProps> = () => {
         try {
           const data: QueryApiResponse = await apiGet(query.endpoint, { curriculum: curriculum });
           setModalData(data);
-          setQuery(query.success)
+          setQuery(query.text)
           onOpen();
         } catch (error: any) {
         }
