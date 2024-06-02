@@ -49,6 +49,8 @@ urlpatterns += [
     url(r'^auth/', include('djoser.urls')),
     url(r'^auth/', include('djoser.urls.jwt')),
     url('user/', include('users.urls')),
+    # Review endpoints
+    url('review/', include('review.urls')),
     # Neo4j endpoints
     url('api/get-message', GetMessageView.as_view()),
     url('api/create-node', CreateNodeView.as_view()),
