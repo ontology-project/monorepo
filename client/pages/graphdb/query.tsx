@@ -48,6 +48,7 @@ const QueryPage: React.FC<QueryPageProps> = () => {
           setQuery(query.text)
           onOpen();
         } catch (error: any) {
+            console.log("error", error)
         }
       };
 

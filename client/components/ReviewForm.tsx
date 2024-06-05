@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, FormControl, FormLabel, Textarea, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Textarea, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, useToast } from '@chakra-ui/react';
 import { apiPost } from '../utils/api';
 
 interface ReviewFormProps {
@@ -14,23 +14,34 @@ interface ReviewFormProps {
 const ReviewForm: React.FC<ReviewFormProps> = ({ query, curriculum, reviewId, initialComment = '', initialRating = 0, onSubmit }) => {
     const [comment, setComment] = useState(initialComment);
     const [rating, setRating] = useState(initialRating);
+    const toast = useToast();
 
     const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      const path = '/review/reviews/';
-      try {
-          const response = await apiPost(path, {
-              comment,
-              rating,
-              query,
-              curriculum,
-          });
-          if (onSubmit) onSubmit(response);
-          console.log(response);
-      } catch (error) {
-          console.error('Error submitting review:', error);
-      }
-  };
+        e.preventDefault();
+        const path = '/review/reviews/';
+        try {
+            const response = await apiPost(path, {
+                comment,
+                rating,
+                query,
+                curriculum,
+            });
+            if (onSubmit) onSubmit(response);
+            toast({
+                title: 'Success Submitting Review',
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            });
+        } catch (error) {
+            toast({
+                title: 'Error Submitting Review',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
+        }
+    };
 
     return (
         <Box borderWidth="1px" borderRadius="lg" p={4}>
