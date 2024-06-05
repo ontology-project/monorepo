@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import DataModal from "../../components/DataModal";
 import { QueryApiResponse } from "../../utils/types";
 import { useRouter } from "next/router";
+import UserReviews from "../../components/UserReview";
 
 
 interface QueryPageProps {
@@ -77,6 +78,8 @@ const QueryPage: React.FC<QueryPageProps> = () => {
                         </Button>
                     ))}
                 </SimpleGrid>
+                <Heading mb={4}>Your Reviews</Heading>
+                <UserReviews></UserReviews>
             </Box>
             <DataModal isOpen={isOpen} onClose={onClose} data={modalData} query={query} curriculum={curriculum} />
         </AuthCheck>

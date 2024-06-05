@@ -113,3 +113,16 @@ export const apiGet = async (path: string, params: any = {}) => {
     }
   }
 };
+
+export const apiDelete = async (path: string) => {
+  try {
+    const response = await instance.delete(path);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(`Error: ${error.response.data.error}`);
+    } else {
+      throw new Error('An unexpected error occurred.');
+    }
+  }
+};

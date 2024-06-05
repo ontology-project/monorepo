@@ -3,6 +3,7 @@ from .serializers import ReviewSerializer
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
 from django.db import IntegrityError
 from rest_framework.exceptions import APIException
+from rest_framework.permissions import AllowAny
 
 class ReviewListCreateView(ListCreateAPIView):
     queryset = Review.objects.all()

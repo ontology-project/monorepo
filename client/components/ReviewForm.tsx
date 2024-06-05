@@ -18,7 +18,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ query, curriculum, reviewId, in
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const path = '/review/reviews/';
+        const path = '/review/';
         try {
             const response = await apiPost(path, {
                 comment,
