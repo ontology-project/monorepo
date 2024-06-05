@@ -16,6 +16,7 @@ const NavBar: React.FC<NavBarProps> = ({ username, isKaprodi, logout }) => {
       <Flex alignItems="center">
         {!isKaprodi && <Link marginRight="8" href="/graphdb/query">Query</Link>}
         {isKaprodi && <Link marginRight="8" href="/graphdb/upload-excel">Upload Excel</Link>}
+        {isKaprodi && <Link marginRight="8" href="/graphdb/kaprodi-reviews">Review</Link>}
         <Text marginRight="8">Welcome, {username}! ({userRole})</Text>
         <Button onClick={logout}>Logout</Button>
       </Flex>

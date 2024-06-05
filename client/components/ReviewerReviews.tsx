@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Text, Table, Tbody, Td, Th, Thead, Tr, useToast, Input, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } from '@chakra-ui/react';
 import { apiDelete, apiGet, apiPut } from '../utils/api';
+import { formatRelative } from 'date-fns/formatRelative';
 
 interface Review {
   id: number;
@@ -12,7 +13,7 @@ interface Review {
   updated_at: string;
 }
 
-const UserReviews: React.FC = () => {
+const ReviewerReviews: React.FC = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [editableReviewId, setEditableReviewId] = useState<number | null>(null);
   const [editedComment, setEditedComment] = useState<string>('');
@@ -142,8 +143,8 @@ const UserReviews: React.FC = () => {
                   review.rating
                 )}
               </Td>
-              <Td>{new Date(review.created_at).toLocaleString()}</Td>
-              <Td>{new Date(review.updated_at).toLocaleString()}</Td>
+              <Td>{formatRelative(review.created_at, new Date())}</Td>
+              <Td>{formatRelative(review.updated_at, new Date())}</Td>
               <Td>
                 {editableReviewId === review.id ? (
                   <>
@@ -173,4 +174,4 @@ const UserReviews: React.FC = () => {
   );
 };
 
-export default UserReviews;
+export default ReviewerReviews;

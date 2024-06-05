@@ -10,11 +10,10 @@ class ReviewListCreateView(ListCreateAPIView):
     serializer_class = ReviewSerializer
 
     def get_queryset(self):
-        queryset = Review.objects.all()
-        username = self.request.query_params.get('username', None)
-        if username is not None:
-            queryset = queryset.filter(reviewer__username=username)
-        return queryset
+        user = self.request.user
+        if user.is_kaprodi:
+            return Review.objects.all()
+        return Review.objects.filter(reviewer=user)
 
     def perform_create(self, serializer):
         try:
