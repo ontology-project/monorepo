@@ -3,7 +3,7 @@ import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr, useToast } from '@chakra
 import { apiGet } from '../../utils/api';
 import AuthCheck from '../../components/AuthCheck';
 import { useRouter } from 'next/router';
-import { formatRelative } from 'date-fns/formatRelative';
+import { formatRelative } from 'date-fns';
 
 interface Review {
   id: number;
@@ -46,37 +46,47 @@ const KaprodiReviews: React.FC = () => {
     fetchReviews();
   }, []);
 
+  // Group reviews by reviewer
+  const groupedReviews = reviews.reduce((acc: { [key: string]: Review[] }, review) => {
+    acc[review.reviewer] = acc[review.reviewer] || [];
+    acc[review.reviewer].push(review);
+    return acc;
+  }, {});
+
   return (
     <AuthCheck>
       <Box padding={10}>
-      <Heading mb={4}>Review Comments</Heading>
-      <Table variant="simple">
-        <Thead>
-          <Tr>
-            <Th>Curriculum</Th>
-            <Th>Query</Th>
-            <Th>Comment</Th>
-            <Th>Rating</Th>
-            <Th>Created At</Th>
-            <Th>Updated At</Th>
-            <Th>Reviewer</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {reviews.map(review => (
-            <Tr key={review.id}>
-              <Td>{review.curriculum}</Td>
-              <Td>{review.query}</Td>
-              <Td>{review.comment}</Td>
-              <Td>{review.rating}</Td>
-              <Td>{formatRelative(review.created_at, new Date())}</Td>
-              <Td>{formatRelative(review.updated_at, new Date())}</Td>
-              <Td>{review.reviewer}</Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </Box>
+        <Heading mb={4}>Review Comments</Heading>
+        {Object.keys(groupedReviews).map(reviewer => (
+          <Box key={reviewer} mb={8}>
+            <Heading size="md" mb={4}>{reviewer}</Heading>
+            <Table variant="simple">
+              <Thead>
+                <Tr>
+                  <Th>Curriculum</Th>
+                  <Th>Query</Th>
+                  <Th>Comment</Th>
+                  <Th>Rating</Th>
+                  <Th>Created At</Th>
+                  <Th>Updated At</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {groupedReviews[reviewer].map(review => (
+                  <Tr key={review.id}>
+                    <Td>{review.curriculum}</Td>
+                    <Td>{review.query}</Td>
+                    <Td>{review.comment}</Td>
+                    <Td>{review.rating}</Td>
+                    <Td>{formatRelative(new Date(review.created_at), new Date())}</Td>
+                    <Td>{formatRelative(new Date(review.updated_at), new Date())}</Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </Box>
+        ))}
+      </Box>
     </AuthCheck>
   );
 };
