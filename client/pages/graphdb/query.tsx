@@ -78,7 +78,7 @@ const QueryPage: React.FC<QueryPageProps> = () => {
                         </Button>
                     ))}
                 </SimpleGrid>
-                <Heading mb={4}>Your Reviews</Heading>
+                <Heading mt={8} mb={4}>Your Reviews</Heading>
                 <UserReviews></UserReviews>
             </Box>
             <DataModal isOpen={isOpen} onClose={onClose} data={modalData} query={query} curriculum={curriculum} />

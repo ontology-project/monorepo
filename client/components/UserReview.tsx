@@ -97,12 +97,11 @@ const UserReviews: React.FC = () => {
 
   return (
     <Box>
-      <Text fontSize="2xl" mb={4}>Your Reviews</Text>
       <Table variant="simple">
         <Thead>
           <Tr>
-            <Th>Query</Th>
             <Th>Curriculum</Th>
+            <Th>Query</Th>
             <Th>Comment</Th>
             <Th>Rating</Th>
             <Th>Created At</Th>
@@ -113,8 +112,8 @@ const UserReviews: React.FC = () => {
         <Tbody>
           {reviews.map(review => (
             <Tr key={review.id}>
-              <Td>{review.query}</Td>
               <Td>{review.curriculum}</Td>
+              <Td>{review.query}</Td>
               <Td>
                 {editableReviewId === review.id ? (
                   <Input
@@ -157,10 +156,10 @@ const UserReviews: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <Button colorScheme="teal" size="sm" mr={2} mb={2} onClick={() => handleEdit(review)}>
+                    <Button colorScheme="teal" size="sm" mr={2} my={1} onClick={() => handleEdit(review)}>
                       Edit
                     </Button>
-                    <Button colorScheme="red" size="sm" onClick={() => handleDelete(review.id)}>
+                    <Button colorScheme="red" size="sm" my={1} onClick={() => handleDelete(review.id)}>
                       Delete
                     </Button>
                   </>
