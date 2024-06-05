@@ -83,6 +83,19 @@ export const apiPost = async (path: string, data: any) => {
   }
 };
 
+export const apiPut = async (path: string, data: any) => {
+  try {
+    const response = await instance.put(path, data);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(`Error: ${error.response.data.error}`);
+    } else {
+      throw new Error('An unexpected error occurred.');
+    }
+  }
+};
+
 export const imageApiPost = async (path: string, data: any) => {
   try {
     let formData = new FormData();

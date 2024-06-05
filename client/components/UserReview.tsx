@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Text, Stack, useToast, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import axios from 'axios';
-import { apiDelete, apiGet } from '../utils/api';
+import { Box, Button, Text, Table, Tbody, Td, Th, Thead, Tr, useToast, Input, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } from '@chakra-ui/react';
+import { apiDelete, apiGet, apiPut } from '../utils/api';
 
 interface Review {
   id: number;
@@ -15,6 +14,9 @@ interface Review {
 
 const UserReviews: React.FC = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [editableReviewId, setEditableReviewId] = useState<number | null>(null);
+  const [editedComment, setEditedComment] = useState<string>('');
+  const [editedRating, setEditedRating] = useState<number>(0);
   const toast = useToast();
 
   useEffect(() => {
@@ -22,7 +24,7 @@ const UserReviews: React.FC = () => {
       try {
         const response = await apiGet('/review/');
         setReviews(response);
-      } catch (error) {
+      } catch (error: any) {
         toast({
           title: 'Error loading reviews',
           description: error.message || 'An error occurred',
@@ -57,8 +59,40 @@ const UserReviews: React.FC = () => {
     }
   };
 
-  const handleEdit = (id: number) => {
-    // Navigate to the edit review page, you may need to implement this
+  const handleEdit = (review: Review) => {
+    setEditableReviewId(review.id);
+    setEditedComment(review.comment);
+    setEditedRating(review.rating);
+  };
+
+  const handleCancelEdit = () => {
+    setEditableReviewId(null);
+  };
+
+  const handleSave = async (id: number) => {
+    try {
+      const review = reviews.find(review => review.id === id);
+      if (!review) return;
+      
+      const updatedReview = { comment: editedComment, rating: editedRating, query: review.query, curriculum: review.curriculum };
+      await apiPut(`/review/${id}/`, updatedReview);
+      setReviews(reviews.map(review => review.id === id ? { ...review, ...updatedReview } : review));
+      setEditableReviewId(null);
+      toast({
+        title: 'Review updated',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Error updating review',
+        description: error.message || 'An error occurred',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -81,17 +115,56 @@ const UserReviews: React.FC = () => {
             <Tr key={review.id}>
               <Td>{review.query}</Td>
               <Td>{review.curriculum}</Td>
-              <Td>{review.comment}</Td>
-              <Td>{review.rating}</Td>
+              <Td>
+                {editableReviewId === review.id ? (
+                  <Input
+                    value={editedComment}
+                    onChange={(e) => setEditedComment(e.target.value)}
+                  />
+                ) : (
+                  review.comment
+                )}
+              </Td>
+              <Td>
+                {editableReviewId === review.id ? (
+                  <NumberInput
+                    min={0}
+                    max={4}
+                    value={editedRating}
+                    onChange={(valueString) => setEditedRating(parseInt(valueString))}
+                  >
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                ) : (
+                  review.rating
+                )}
+              </Td>
               <Td>{new Date(review.created_at).toLocaleString()}</Td>
               <Td>{new Date(review.updated_at).toLocaleString()}</Td>
               <Td>
-                <Button colorScheme="teal" size="sm" mr={2} onClick={() => handleEdit(review.id)}>
-                  Edit
-                </Button>
-                <Button colorScheme="red" size="sm" onClick={() => handleDelete(review.id)}>
-                  Delete
-                </Button>
+                {editableReviewId === review.id ? (
+                  <>
+                    <Button colorScheme="teal" size="sm" mr={2} mb={2} onClick={() => handleSave(review.id)}>
+                      Submit
+                    </Button>
+                    <Button colorScheme="gray" size="sm" onClick={handleCancelEdit}>
+                      Cancel
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button colorScheme="teal" size="sm" mr={2} mb={2} onClick={() => handleEdit(review)}>
+                      Edit
+                    </Button>
+                    <Button colorScheme="red" size="sm" onClick={() => handleDelete(review.id)}>
+                      Delete
+                    </Button>
+                  </>
+                )}
               </Td>
             </Tr>
           ))}
