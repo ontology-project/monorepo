@@ -6,7 +6,7 @@ const Glossary: React.FC = () => {
 
   return (
     <Box>
-      <Heading mb={4}>Glossary</Heading>
+      <Heading mt={8} mb={4}>Glossary</Heading>
       <Box display="grid" gridTemplateColumns={`repeat(${columns}, 1fr)`} gap={4}>
         {TERMS.map((term, index) => (
           <Box

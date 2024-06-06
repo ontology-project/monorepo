@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Text, Table, Tbody, Td, Th, Thead, Tr, useToast, Input, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } from '@chakra-ui/react';
+import { Box, Button, Text, Table, Tbody, Td, Th, Thead, Tr, useToast, Input, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, Heading } from '@chakra-ui/react';
 import { apiDelete, apiGet, apiPut } from '../utils/api';
 import { formatRelative } from 'date-fns/formatRelative';
 
@@ -99,6 +99,7 @@ const ReviewerReviews: React.FC = () => {
 
   return (
     <Box>
+      <Heading mt={8} mb={4}>Your Reviews</Heading>
       <Table variant="simple">
         <Thead>
           <Tr>

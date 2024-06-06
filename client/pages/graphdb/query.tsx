@@ -68,8 +68,7 @@ const QueryPage: React.FC<QueryPageProps> = () => {
     return (
         <AuthCheck>
             <Box padding={10}>
-                <Glossary></Glossary>
-                <Heading mt={8} mb={4}>Queries for Curriculum Review</Heading>
+                <Heading mb={4}>Queries for Curriculum Review</Heading>
                 <Text>Select Curriculum</Text>
                 <Select mb={4} value={curriculum} onChange={(e) => setCurriculum(e.target.value)}>
                     {curriculumOptions.map((curr) => (
@@ -87,8 +86,8 @@ const QueryPage: React.FC<QueryPageProps> = () => {
                         </Button>
                     ))}
                 </SimpleGrid>
-                <Heading mt={8} mb={4}>Your Reviews</Heading>
                 <ReviewerReviews></ReviewerReviews>
+                <Glossary></Glossary>
             </Box>
             <DataModal isOpen={isOpen} onClose={onClose} data={modalData} query={query} curriculum={curriculum} />
         </AuthCheck>
