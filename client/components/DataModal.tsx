@@ -27,7 +27,6 @@ const DataModal: React.FC<DataModalProps> = ({ isOpen, onClose, data, query, cur
         <ModalHeader>Query Results</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Text mb={4}>{data?.success}</Text>
           {data && data.properties && data.properties.length > 0 ? (
             <Box overflowX="auto">
               <Table variant="simple">

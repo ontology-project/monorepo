@@ -85,6 +85,7 @@ const ReviewerReviews: React.FC = () => {
         duration: 5000,
         isClosable: true,
       });
+      window.location.reload();
     } catch (error: any) {
       toast({
         title: 'Error updating review',

@@ -33,6 +33,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ query, curriculum, reviewId, in
                 duration: 5000,
                 isClosable: true,
             });
+            window.location.reload();
         } catch (error) {
             toast({
                 title: 'Error Submitting Review',
