@@ -422,7 +422,11 @@ class GetPLOByCurriculumAPIView(APIView):
         SELECT * WHERE {{
 	        :{curriculum} :hasPEO ?peo .
             ?plo :partOf ?peo ;
-                :label ?label .
+                a :ProgramLearningOutcome .
+
+        OPTIONAL {{ ?plo :label ?ploLabelQ . }}
+
+        BIND(COALESCE(?ploLabelQ, "NO_LABEL") AS ?ploLabel)
         }}
         """
 
@@ -438,7 +442,7 @@ class GetPLOByCurriculumAPIView(APIView):
             properties = [{
                 # Deleting the peo part
                 "plo":clean_response(result["plo"]["value"]),
-                "label":clean_response(result["label"]["value"])
+                "ploLabel":clean_response(result["ploLabel"]["value"])
                 } for result in results["results"]["bindings"]]
             return Response({'success': 'Get PLO Success!', 'properties': properties})
 
@@ -686,59 +690,9 @@ class GetCurriculumStructure(APIView):
 # TODO
 class GetPEOPLOStructure(APIView):
     def get(self, request):
-        curriculum = request.query_params.get('curriculum')
-
-        if not all([curriculum]):
-            return Response({'error': 'curriculum field required'}, 
-                                status=status.HTTP_400_BAD_REQUEST)
+        pass
         
-        query_string = f"""
-        PREFIX : <{PREFIX}> 
-        PREFIX rdf: <{RDF}>
-        PREFIX owl: <{OWL}>
-
-        SELECT ?peo (IF(BOUND(?plo), ?plo, "NO_RELATION") AS ?hasPLORel)
-                (IF(BOUND(?clo), ?clo, "NO_RELATION") AS ?hasCLORel)
-                (IF(BOUND(?ulo), ?ulo, "NO_RELATION") AS ?hasULORel) WHERE {{
-	        :{curriculum} a :Curriculum;
-                :hasPEO ?peo .
-            ?peo a :ProgramEducationalObjective .
-            OPTIONAL {{ 
-                ?plo :partOf ?peo ;
-                      a :ProgramLearningOutcome .
-                OPTIONAL {{ 
-                    ?clo :partOf ?plo ;
-                          a :CourseLearningOutcome .
-                    OPTIONAL {{ 
-                        ?ulo :partOf ?clo ;
-                              a :UnitLearningOutcome . 
-                    }}
-                }}
-            }}
-        }}
-        """
-        sparql = SPARQLWrapper(GRAPHDB_GET) 
-        sparql.setQuery(query_string)
-        sparql.setReturnFormat(JSON)
-        sparql.setMethod("GET")
-
-        print("sparqql", query_string)
-
-        try:
-            results = sparql.queryAndConvert()
-            properties = [{
-                "peo":clean_response(result["peo"]["value"]),
-                "hasPLORel":clean_response(result["hasPLORel"]["value"]),
-                "hasCLORel":clean_response(result["hasCLORel"]["value"]),
-                "hasULORel":clean_response(result["hasULORel"]["value"]),
-                } for result in results["results"]["bindings"]]
-
-            return Response({'success': 'Get Curriculum Structure Success!', 'properties': properties})
-
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-class GetCoursePLOMapApiView(APIView):
+class GetCoursePLOMapAPIView(APIView):
     def get(self, request):
         curriculum = request.query_params.get('curriculum')
 
@@ -788,7 +742,7 @@ class GetCoursePLOMapApiView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-class GetCoursePLOCLOMapApiView(APIView):
+class GetCoursePLOCLOMapAPIView(APIView):
     def get(self, request):
         curriculum = request.query_params.get('curriculum')
 
@@ -840,6 +794,48 @@ class GetCoursePLOCLOMapApiView(APIView):
                 } for result in results["results"]["bindings"]]
 
             return Response({'success': 'Get Course PLO CLO Mapping Success!', 'properties': properties})
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class GetPEOByCurriculumAPIView(APIView):
+    def get(self, request):
+        curriculum = request.query_params.get('curriculum')
+
+        if not all([curriculum]):
+            return Response({'error': 'curriculum field required'}, 
+                                status=status.HTTP_400_BAD_REQUEST)
+        
+        query_string = f"""
+        PREFIX : <{PREFIX}> 
+        PREFIX rdf: <{RDF}>
+        PREFIX owl: <{OWL}>
+
+        SELECT * WHERE {{
+                :{curriculum} a :Curriculum;
+                    :hasPEO ?peo .
+                ?peo a :ProgramEducationalObjective .
+
+                OPTIONAL {{ ?peo :label ?peoLabelQ . }}
+                BIND(COALESCE(?peoLabelQ, "NO_LABEL") AS ?peoLabel)
+            }}
+        """
+
+        sparql = SPARQLWrapper(GRAPHDB_GET) 
+        sparql.setQuery(query_string)
+        sparql.setReturnFormat(JSON)
+        sparql.setMethod("GET")
+
+        print("sparqql", query_string)
+
+        try:
+            results = sparql.queryAndConvert()
+            properties = [{
+                "peo":clean_response(result["peo"]["value"]),
+                "peoLabel":clean_response(result["peoLabel"]["value"]),
+                } for result in results["results"]["bindings"]]
+
+            return Response({'success': 'Get PEO Success!', 'properties': properties})
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
