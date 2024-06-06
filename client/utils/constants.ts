@@ -39,12 +39,18 @@ export const RELATIONSHIPS = [
 ];
 
 export const QUERIES = [
-    { text: "PLO (Program Learning Outcomes)", endpoint: "/api/get-plo" },
+    { text: "PLO", endpoint: "/api/get-plo" },
     { text: "PLO and the SNDikti components", endpoint: "/api/get-sndikti" },
     { text: "PLO and the KKNI components", endpoint: "/api/get-kkni" },
     { text: "PLO and Cognitive, Affective, Psychomotoric Domains", endpoint: "/api/get-knowledge-cat" },
-    { text: "PEO (Program Educational Objectives) to PLO Mapping", endpoint: "/api/get-peo-map" },
+    { text: "PEO to PLO Mapping", endpoint: "/api/get-peo-map" },
     { text: "Curriculum Structure", endpoint: "/api/get-curriculum-structure" },
     { text: "PLO to Course Mapping", endpoint: "/api/get-course-plo-map"},
-    { text: "CLO (Course Learning Outcomes) to Course Mapping", endpoint: "/api/get-course-plo-clo-map"}
+    { text: "CLO to Course Mapping", endpoint: "/api/get-course-plo-clo-map"}
+];
+
+export const TERMS = [
+    {key: "PLO", value: "Program Learning Outcomes"},
+    {key: "PEO", value: "Program Educational Objectives"},
+    {key: "CLO", value: "Course Learning Outcomes"},
 ];

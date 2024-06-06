@@ -1,4 +1,4 @@
-import { Box, Button, Heading, Select, SimpleGrid, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, Heading, Select, SimpleGrid, Text, useDisclosure, useToast } from "@chakra-ui/react";
 import AuthCheck from "../../components/AuthCheck";
 import { QUERIES } from "../../utils/constants";
 import { apiGet } from "../../utils/api";
@@ -7,6 +7,7 @@ import DataModal from "../../components/DataModal";
 import { QueryApiResponse } from "../../utils/types";
 import { useRouter } from "next/router";
 import ReviewerReviews from "../../components/ReviewerReviews";
+import Glossary from "../../components/Glossary";
 
 
 interface QueryPageProps {
@@ -19,6 +20,7 @@ const QueryPage: React.FC<QueryPageProps> = () => {
     const [modalData, setModalData] = useState<QueryApiResponse | null>(null);
     const router = useRouter();
     const [query, setQuery] = useState<string>("");
+    const toast = useToast();
 
     useEffect(() => {
         if (localStorage.getItem('isKaprodi') === 'true') {
@@ -46,8 +48,14 @@ const QueryPage: React.FC<QueryPageProps> = () => {
         try {
           const data: QueryApiResponse = await apiGet(query.endpoint, { curriculum: curriculum });
           setModalData(data);
-          setQuery(query.text)
+          setQuery(query)
           onOpen();
+          toast({
+            title: data.success,
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
+          });
         } catch (error: any) {
             console.log("error", error)
         }
@@ -60,7 +68,8 @@ const QueryPage: React.FC<QueryPageProps> = () => {
     return (
         <AuthCheck>
             <Box padding={10}>
-                <Heading mb={4}>Queries for Curriculum Review</Heading>
+                <Glossary></Glossary>
+                <Heading mt={8} mb={4}>Queries for Curriculum Review</Heading>
                 <Text>Select Curriculum</Text>
                 <Select mb={4} value={curriculum} onChange={(e) => setCurriculum(e.target.value)}>
                     {curriculumOptions.map((curr) => (
