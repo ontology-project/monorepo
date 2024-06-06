@@ -421,7 +421,8 @@ class GetPLOByCurriculumAPIView(APIView):
 
         SELECT * WHERE {{
 	        :{curriculum} :hasPEO ?peo .
-            ?plo :partOf ?peo .
+            ?plo :partOf ?peo ;
+                :label ?label .
         }}
         """
 
@@ -435,8 +436,9 @@ class GetPLOByCurriculumAPIView(APIView):
         try:
             results = sparql.queryAndConvert()
             properties = [{
-                "peo":clean_response(result["peo"]["value"]),
-                "plo":clean_response(result["plo"]["value"])
+                # Deleting the peo part
+                "plo":clean_response(result["plo"]["value"]),
+                "label":clean_response(result["label"]["value"])
                 } for result in results["results"]["bindings"]]
             return Response({'success': 'Get PLO Success!', 'properties': properties})
 
@@ -458,7 +460,8 @@ class GetPLOByCurriculumSNDiktiAPIView(APIView):
 
         SELECT * WHERE {{
 	        :{curriculum} :hasPEO ?peo .
-            ?plo :partOf ?peo .
+            ?plo :partOf ?peo ;
+                :label ?label .
 
             OPTIONAL {{?plo :nsAttitude ?nsAttitude}}
             OPTIONAL {{?plo :nsGenericSkill ?nsGenericSkill}}
@@ -478,6 +481,7 @@ class GetPLOByCurriculumSNDiktiAPIView(APIView):
             results = sparql.queryAndConvert()
             properties = [{
                 "plo":clean_response(result["plo"]["value"]),
+                "label":clean_response(result["label"]["value"]),
                 "sndikti_attitude":clean_response(result["nsAttitude"]["value"]),
                 "sndikti_genericskill":clean_response(result["nsGenericSkill"]["value"]),
                 "sndikti_knowledge":clean_response(result["nsKnowledge"]["value"]),
@@ -503,7 +507,8 @@ class GetPLOByCurriculumKKNIAPIView(APIView):
 
         SELECT * WHERE {{
 	        :{curriculum} :hasPEO ?peo .
-            ?plo :partOf ?peo .
+            ?plo :partOf ?peo ;
+                :label ?label .
 
             OPTIONAL {{?plo :nqfAuthorityResponsibility ?nqfAuthorityResponsibility}}
             OPTIONAL {{?plo :nqfKnowledge ?nqfKnowledge}}
@@ -522,6 +527,7 @@ class GetPLOByCurriculumKKNIAPIView(APIView):
             results = sparql.queryAndConvert()
             properties = [{
                 "plo":clean_response(result["plo"]["value"]),
+                "label":clean_response(result["label"]["value"]),
                 "kkni_autoresp":clean_response(result["nqfAuthorityResponsibility"]["value"]),
                 "kkni_knowledge":clean_response(result["nqfKnowledge"]["value"]),
                 "kkni_workskill":clean_response(result["nqfWorkingSkill"]["value"]),
@@ -548,7 +554,8 @@ class GetPLOByCurriculumKnowledgeCategoryAPIView(APIView):
 
         SELECT * WHERE {{
 	        :{curriculum} :hasPEO ?peo .
-            ?plo :partOf ?peo .
+            ?plo :partOf ?peo ;
+                :label ?label .
 
             OPTIONAL {{?plo :hasDomain ?domain}} 
         }}
@@ -565,6 +572,7 @@ class GetPLOByCurriculumKnowledgeCategoryAPIView(APIView):
             results = sparql.queryAndConvert()
             properties = [{
                 "plo":clean_response(result["plo"]["value"]),
+                "label":clean_response(result["label"]["value"]),
                 "domain":clean_response(result["domain"]["value"]),
                 } for result in results["results"]["bindings"]]
 
@@ -586,11 +594,17 @@ class GetPEOMapToPLOAPIView(APIView):
         PREFIX rdf: <{RDF}>
         PREFIX owl: <{OWL}>
 
-        SELECT ?peo (IF(BOUND(?plo), ?plo, "NO_RELATION") AS ?hasPLORel) WHERE {{
+        SELECT ?peo ?peoLabel (IF(BOUND(?plo), ?plo, "NO_RELATION") AS ?hasPLORel) ?ploLabel WHERE {{
 	        :{curriculum} a :Curriculum;
                 :hasPEO ?peo .
             ?peo a :ProgramEducationalObjective .
+            
+            OPTIONAL {{ ?peo :label ?peoLabelQ }}
             OPTIONAL {{ ?plo :partOf ?peo . }}
+            OPTIONAL {{ ?plo :label ?ploLabelQ .}}
+
+            BIND(COALESCE(?peoLabelQ, "NO_LABEL") AS ?peoLabel)
+            BIND(COALESCE(?ploLabelQ, "NO_LABEL") AS ?ploLabel)
         }}
         """
         sparql = SPARQLWrapper(GRAPHDB_GET) 
@@ -604,7 +618,9 @@ class GetPEOMapToPLOAPIView(APIView):
             results = sparql.queryAndConvert()
             properties = [{
                 "peo":clean_response(result["peo"]["value"]),
+                "peoLabel":clean_response(result["peoLabel"]["value"]),
                 "hasPLORel":clean_response(result["hasPLORel"]["value"]),
+                "ploLabel":clean_response(result["ploLabel"]["value"])
                 } for result in results["results"]["bindings"]]
 
             return Response({'success': 'Get PEO Map to PLO Success!', 'properties': properties})
@@ -735,7 +751,7 @@ class GetCoursePLOMapApiView(APIView):
         PREFIX rdf: <{RDF}>
         PREFIX owl: <{OWL}>
 
-        SELECT ?peo ?plo (IF(BOUND(?course), ?course, "NO_COURSE") AS ?hasCourse)
+        SELECT ?peo ?peoLabel ?plo ?ploLabel (IF(BOUND(?course), ?course, "NO_COURSE") AS ?hasCourse)
             WHERE {{
                 :{curriculum} a :Curriculum;
                     :hasPEO ?peo .
@@ -743,6 +759,11 @@ class GetCoursePLOMapApiView(APIView):
                 ?plo :partOf ?peo ;
                     a :ProgramLearningOutcome .
                 OPTIONAL {{ ?plo :ploHasCourse ?course . }}
+                OPTIONAL {{ ?peo :label ?peoLabelQ . }}
+                OPTIONAL {{ ?plo :label ?ploLabelQ . }}
+
+                BIND(COALESCE(?peoLabelQ, "NO_LABEL") AS ?peoLabel)
+                BIND(COALESCE(?ploLabelQ, "NO_LABEL") AS ?ploLabel)
             }}
         """
         sparql = SPARQLWrapper(GRAPHDB_GET) 
@@ -756,7 +777,9 @@ class GetCoursePLOMapApiView(APIView):
             results = sparql.queryAndConvert()
             properties = [{
                 "peo":clean_response(result["peo"]["value"]),
+                "peoLabel":clean_response(result["peoLabel"]["value"]),
                 "plo":clean_response(result["plo"]["value"]),
+                "ploLabel":clean_response(result["ploLabel"]["value"]),
                 "hasCourse":clean_response(result["hasCourse"]["value"]),
                 } for result in results["results"]["bindings"]]
 
@@ -778,7 +801,7 @@ class GetCoursePLOCLOMapApiView(APIView):
         PREFIX rdf: <{RDF}>
         PREFIX owl: <{OWL}>
 
-        SELECT ?peo ?plo ?clo (IF(BOUND(?course), ?course, "NO_COURSE") AS ?hasCourse)
+        SELECT ?peo ?peoLabel ?plo ?ploLabel ?clo ?cloLabel (IF(BOUND(?course), ?course, "NO_COURSE") AS ?hasCourse)
             WHERE {{
                 :{curriculum} a :Curriculum;
                     :hasPEO ?peo .
@@ -788,6 +811,13 @@ class GetCoursePLOCLOMapApiView(APIView):
                 ?clo :partOf ?plo ;
                     a :CourseLearningOutcome .
                 OPTIONAL {{ ?course :hasCLO ?clo . }}
+                OPTIONAL {{ ?peo :label ?peoLabelQ . }}
+                OPTIONAL {{ ?plo :label ?ploLabelQ . }}
+                OPTIONAL {{ ?clo :label ?cloLabelQ . }}
+
+                BIND(COALESCE(?peoLabelQ, "NO_LABEL") AS ?peoLabel)
+                BIND(COALESCE(?ploLabelQ, "NO_LABEL") AS ?ploLabel)
+                BIND(COALESCE(?cloLabelQ, "NO_LABEL") AS ?cloLabel)
             }}
         """
         sparql = SPARQLWrapper(GRAPHDB_GET) 
@@ -801,8 +831,11 @@ class GetCoursePLOCLOMapApiView(APIView):
             results = sparql.queryAndConvert()
             properties = [{
                 "peo":clean_response(result["peo"]["value"]),
+                "peoLabel":clean_response(result["peoLabel"]["value"]),
                 "plo":clean_response(result["plo"]["value"]),
+                "ploLabel":clean_response(result["ploLabel"]["value"]),
                 "clo":clean_response(result["clo"]["value"]),
+                "cloLabel":clean_response(result["cloLabel"]["value"]),
                 "hasCourse":clean_response(result["hasCourse"]["value"]),
                 } for result in results["results"]["bindings"]]
 
@@ -810,6 +843,8 @@ class GetCoursePLOCLOMapApiView(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 
 
 # Neo4J APIs
