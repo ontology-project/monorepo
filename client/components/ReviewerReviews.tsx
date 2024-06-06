@@ -159,10 +159,10 @@ const ReviewerReviews: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <Button colorScheme="teal" size="sm" mr={2} my={1} onClick={() => handleEdit(review)}>
+                    <Button colorScheme="teal" size="sm" p={4} mr={2} my={1} onClick={() => handleEdit(review)}>
                       Edit
                     </Button>
-                    <Button colorScheme="red" size="sm" my={1} onClick={() => handleDelete(review.id)}>
+                    <Button colorScheme="red" size="sm" p={4} my={1} onClick={() => handleDelete(review.id)}>
                       Delete
                     </Button>
                   </>
