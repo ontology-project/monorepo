@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, Text, Table, Tbody, Td, Th, Thead, Tr, useToast, Input, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, Heading } from '@chakra-ui/react';
 import { apiDelete, apiGet, apiPut } from '../utils/api';
 import { formatRelative } from 'date-fns/formatRelative';
+import { TOAST_DURATION } from '../utils/constants';
 
 interface Review {
   id: number;
@@ -30,7 +31,7 @@ const ReviewerReviews: React.FC = () => {
           title: 'Error loading reviews',
           description: error.message || 'An error occurred',
           status: 'error',
-          duration: 5000,
+          duration: TOAST_DURATION,
           isClosable: true,
         });
       }
@@ -46,7 +47,7 @@ const ReviewerReviews: React.FC = () => {
       toast({
         title: 'Review deleted',
         status: 'success',
-        duration: 5000,
+        duration: TOAST_DURATION,
         isClosable: true,
       });
     } catch (error: any) {
@@ -54,7 +55,7 @@ const ReviewerReviews: React.FC = () => {
         title: 'Error deleting review',
         description: error.message || 'An error occurred',
         status: 'error',
-        duration: 5000,
+        duration: TOAST_DURATION,
         isClosable: true,
       });
     }
@@ -82,7 +83,7 @@ const ReviewerReviews: React.FC = () => {
       toast({
         title: 'Review updated',
         status: 'success',
-        duration: 5000,
+        duration: TOAST_DURATION,
         isClosable: true,
       });
       window.location.reload();
@@ -91,7 +92,7 @@ const ReviewerReviews: React.FC = () => {
         title: 'Error updating review',
         description: error.message || 'An error occurred',
         status: 'error',
-        duration: 5000,
+        duration: TOAST_DURATION,
         isClosable: true,
       });
     }

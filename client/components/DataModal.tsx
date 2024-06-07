@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   Box,
@@ -33,6 +33,12 @@ interface DataModalProps {
 const DataModal: React.FC<DataModalProps> = ({ isOpen, onClose, data, query, curriculum }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
+
+  useEffect(() => {
+    if (!isOpen) {
+      setCurrentPage(1);
+    }
+  }, [isOpen]);
 
   const getDisplayKey = (key: string) => {
     return keyMappings[key] || key;

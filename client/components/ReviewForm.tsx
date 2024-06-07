@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, FormControl, FormLabel, Textarea, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, useToast } from '@chakra-ui/react';
 import { apiPost } from '../utils/api';
+import { TOAST_DURATION } from '../utils/constants';
 
 interface ReviewFormProps {
     query: string;
@@ -30,7 +31,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ query, curriculum, reviewId, in
             toast({
                 title: 'Success Submitting Review',
                 status: 'success',
-                duration: 5000,
+                duration: TOAST_DURATION,
                 isClosable: true,
             });
             window.location.reload();
@@ -38,7 +39,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ query, curriculum, reviewId, in
             toast({
                 title: 'Error Submitting Review',
                 status: 'error',
-                duration: 5000,
+                duration: TOAST_DURATION,
                 isClosable: true,
             });
         }

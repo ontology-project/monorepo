@@ -1,6 +1,6 @@
 import { Box, Button, Heading, Select, SimpleGrid, Text, useDisclosure, useToast } from "@chakra-ui/react";
 import AuthCheck from "../../components/AuthCheck";
-import { QUERIES } from "../../utils/constants";
+import { QUERIES, TOAST_DURATION } from "../../utils/constants";
 import { apiGet } from "../../utils/api";
 import { useEffect, useState } from "react";
 import DataModal from "../../components/DataModal";
@@ -53,7 +53,7 @@ const QueryPage: React.FC<QueryPageProps> = () => {
           toast({
             title: data.success,
             status: 'success',
-            duration: 5000,
+            duration: TOAST_DURATION,
             isClosable: true,
           });
         } catch (error: any) {

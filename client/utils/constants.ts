@@ -54,3 +54,5 @@ export const TERMS = [
     {key: "PEO", value: "Program Educational Objectives"},
     {key: "CLO", value: "Course Learning Outcomes"},
 ];
+
+export const TOAST_DURATION = 1500;

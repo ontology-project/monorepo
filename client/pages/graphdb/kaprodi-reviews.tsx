@@ -4,6 +4,7 @@ import { apiGet } from '../../utils/api';
 import AuthCheck from '../../components/AuthCheck';
 import { useRouter } from 'next/router';
 import { formatRelative } from 'date-fns';
+import { TOAST_DURATION } from '../../utils/constants';
 
 interface Review {
   id: number;
@@ -37,7 +38,7 @@ const KaprodiReviews: React.FC = () => {
           title: 'Error loading reviews',
           description: error.message || 'An error occurred',
           status: 'error',
-          duration: 5000,
+          duration: TOAST_DURATION,
           isClosable: true,
         });
       }
