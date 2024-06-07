@@ -14,7 +14,7 @@ class Review(models.Model):
 
   class Meta:
     constraints = [
-      models.UniqueConstraint(fields=['reviewer', 'query'], name='unique_reviewer_query')
+      models.UniqueConstraint(fields=['reviewer', 'query', 'curriculum'], name='unique_reviewer_query_curriculum')
     ]
   
   def __str__(self):
