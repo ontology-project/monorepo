@@ -21,6 +21,7 @@ import {
 import { QueryApiResponse } from '../utils/types';
 import { keyMappings, valueMappings } from '../utils/keyMappings';
 import ReviewForm from './ReviewForm';
+import NestedTable from './NestedTable';
 
 interface DataModalProps {
   isOpen: boolean;
@@ -62,6 +63,37 @@ const DataModal: React.FC<DataModalProps> = ({ isOpen, onClose, data, query, cur
     return data?.properties.slice(startIndex, endIndex) || [];
   };
 
+  const renderTable = () => {
+    if (query === "PEO to PLO Mapping" || query === "PLO to Course Mapping" || query === "CLO to Course Mapping") {
+      return <NestedTable data={data?.properties} query={query} />;
+    }
+
+    return (
+      <Box overflowX="auto">
+        <Table variant="simple">
+          <Thead>
+            <Tr>
+              {data && data.properties.length > 0 && Object.keys(data.properties[0]).map((key) => (
+                <Th key={key}>{getDisplayKey(key)}</Th>
+              ))}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {getPageData().map((property, index) => (
+              <Tr key={index}>
+                {Object.entries(property).map(([key, value]) => (
+                  <Td key={key} whiteSpace="normal" overflow="hidden" textOverflow="ellipsis">
+                    {getDisplayValue(value)}
+                  </Td>
+                ))}
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
+    );
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="auto">
       <ModalOverlay />
@@ -70,27 +102,8 @@ const DataModal: React.FC<DataModalProps> = ({ isOpen, onClose, data, query, cur
         <ModalCloseButton />
         <ModalBody>
           {data && data.properties && data.properties.length > 0 ? (
-            <Box overflowX="auto">
-              <Table variant="simple">
-                <Thead>
-                  <Tr>
-                    {Object.keys(data.properties[0]).map((key) => (
-                      <Th key={key}>{getDisplayKey(key)}</Th>
-                    ))}
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {getPageData().map((property, index) => (
-                    <Tr key={index}>
-                      {Object.entries(property).map(([key, value]) => (
-                        <Td key={key} whiteSpace="normal" overflow="hidden" textOverflow="ellipsis">
-                          {getDisplayValue(value)}
-                        </Td>
-                      ))}
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
+            <>
+              {renderTable()}
               <Flex justifyContent="space-between" my={4}>
                 <Button onClick={handlePreviousPage} isDisabled={currentPage === 1}>
                   Previous
@@ -102,7 +115,7 @@ const DataModal: React.FC<DataModalProps> = ({ isOpen, onClose, data, query, cur
                   Next
                 </Button>
               </Flex>
-            </Box>
+            </>
           ) : (
             <Text>No properties found.</Text>
           )}
