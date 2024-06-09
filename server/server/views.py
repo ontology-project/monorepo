@@ -645,7 +645,10 @@ class GetPEOMapToPLOAPIView(APIView):
                     'ploLabel': item['ploLabel']
                 })
 
-            return Response({'success': 'Get PEO Map to PLO Success!', 'properties': result})
+            # Convert the result to a list of dictionaries
+            final_result = list(result.values())
+
+            return Response({'success': 'Get PEO Map to PLO Success!', 'properties': final_result})
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -745,6 +748,8 @@ class GetCoursePLOMapAPIView(APIView):
 
         print("sparqql", query_string)
 
+        
+
         try:
             results = sparql.queryAndConvert()
             properties = [{
@@ -754,8 +759,30 @@ class GetCoursePLOMapAPIView(APIView):
                 "ploLabel":clean_response(result["ploLabel"]["value"]),
                 "hasCourse":clean_response(result["hasCourse"]["value"]),
                 } for result in results["results"]["bindings"]]
+            
+            # Initialize an empty dictionary to hold the result
+            result = {}
 
-            return Response({'success': 'Get Course PLO Mapping Success!', 'properties': properties})
+            # Iterate over the data
+            for item in properties:
+                # If the 'peo' value is not in the result, add it
+                if item['peo'] not in result:
+                    result[item['peo']] = {
+                        'peo': item['peo'],
+                        'peoLabel': item['peoLabel'],
+                        'plo': []
+                    }
+                # Add the 'plo' value to the list
+                result[item['peo']]['plo'].append({
+                    'hasPLORel': item['plo'],
+                    'ploLabel': item['ploLabel'],
+                    'course': item['hasCourse']
+                })
+
+            # Convert the result to a list of dictionaries
+            final_result = list(result.values())
+
+            return Response({'success': 'Get Course PLO Mapping Success!', 'properties': final_result})
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -810,8 +837,47 @@ class GetCoursePLOCLOMapAPIView(APIView):
                 "cloLabel":clean_response(result["cloLabel"]["value"]),
                 "hasCourse":clean_response(result["hasCourse"]["value"]),
                 } for result in results["results"]["bindings"]]
+            
+            # Initialize an empty dictionary
+            result = {}
 
-            return Response({'success': 'Get Course PLO CLO Mapping Success!', 'properties': properties})
+            # Iterate over the data
+            for item in properties:
+                peo = item['peo']
+                plo = item['plo']
+                clo = item['clo']
+
+                # If the PEO is not in the result, add it
+                if peo not in result:
+                    result[peo] = {
+                        'peoLabel': item['peoLabel'],
+                        'plo': []
+                    }
+
+                # If the PLO is not in the PEO, add it
+                if not any(d['hasPLORel'] == plo for d in result[peo]['plo']):
+                    result[peo]['plo'].append({
+                        'hasPLORel': plo,
+                        'ploLabel': item['ploLabel'],
+                        'clo': []
+                    })
+
+                # Add the CLO to the PLO
+                for d in result[peo]['plo']:
+                    if d['hasPLORel'] == plo:
+                        d['clo'].append({
+                            'hasCLORel': clo,
+                            'cloLabel': item['cloLabel'],
+                            'hasCourse': item['hasCourse']
+                        })
+
+            # Convert the result to the desired format
+            final_result = []
+            for peo, peo_data in result.items():
+                peo_dict = {'peo': peo, 'peoLabel': peo_data['peoLabel'], 'plo': peo_data['plo']}
+                final_result.append(peo_dict)
+
+            return Response({'success': 'Get Course PLO CLO Mapping Success!', 'properties': final_result})
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
