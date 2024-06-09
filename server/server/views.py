@@ -626,8 +626,26 @@ class GetPEOMapToPLOAPIView(APIView):
                 "hasPLORel":clean_response(result["hasPLORel"]["value"]),
                 "ploLabel":clean_response(result["ploLabel"]["value"])
                 } for result in results["results"]["bindings"]]
+            
+            # Initialize an empty dictionary to hold the result
+            result = {}
 
-            return Response({'success': 'Get PEO Map to PLO Success!', 'properties': properties})
+            # Iterate over the data
+            for item in properties:
+                # If the 'peo' value is not in the result, add it
+                if item['peo'] not in result:
+                    result[item['peo']] = {
+                        'peo': item['peo'],
+                        'peoLabel': item['peoLabel'],
+                        'plo': []
+                    }
+                # Add the 'plo' value to the list
+                result[item['peo']]['plo'].append({
+                    'hasPLORel': item['hasPLORel'],
+                    'ploLabel': item['ploLabel']
+                })
+
+            return Response({'success': 'Get PEO Map to PLO Success!', 'properties': result})
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
