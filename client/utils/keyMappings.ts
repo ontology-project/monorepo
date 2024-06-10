@@ -2,6 +2,9 @@ export const keyMappings: { [key: string]: string } = {
   plo: "PLO",
   peo: "PEO",
   clo: "CLO",
+  peoLabel: "PEO Label",
+  ploLabel: "PLO Label",
+  cloLabel: "CLO Label",
   hasPLORel: "Has PLO Relationship",
   hasCLORel: "Has CLO Relationship",
   hasULORel: "Has ULO Relationship",
@@ -18,5 +21,6 @@ export const keyMappings: { [key: string]: string } = {
 
 export const valueMappings: { [key: string]: string} = {
   NO_RELATION: "❌",
-  NO_COURSE: "❌"
+  NO_COURSE: "❌",
+  NO_LABEL: "❌"
 };

@@ -1,6 +1,15 @@
 interface PLOProperty {
   peo?: string;
+  peoLabel?: string;
   plo: string;
+  ploLabel?: string;
+  course?: string;
+}
+
+interface CLOProperty {
+  hasCLORel: string;
+  cloLabel: string;
+  hasCourse: string;
 }
 
 interface SNDiktiProperty {
@@ -20,7 +29,8 @@ interface KKNIProperty {
 
 interface PEOMapPLOProperty {
   peo: string;
-  hasPLORel: string;
+  peoLabel?: string;
+  plo: Array<{ hasPLORel: string; ploLabel: string; clo?: CLOProperty[]; course?: string }>;
 }
 
 interface CurriculumStructureProperty {
