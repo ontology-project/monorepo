@@ -26,7 +26,7 @@ urlpatterns = [
 
 urlpatterns += [
     # Admin endpoint
-    path('admin/', admin.site.urls),
+   #  path('admin/', admin.site.urls),
     # Auth endpoints
     url(r'^auth/', include('djoser.urls')),
     url(r'^auth/', include('djoser.urls.jwt')),
