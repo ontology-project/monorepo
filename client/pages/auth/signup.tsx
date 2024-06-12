@@ -107,10 +107,9 @@ export default function Signup() {
             >
               <FormControl>
                 <InputGroup>
-                  <InputLeftElement
-                    pointerEvents="none"
-                    children={<CFaUserAlt color="gray.300" />}
-                  />
+                  <InputLeftElement pointerEvents="none">
+                    <CFaUserAlt color="gray.300" />
+                  </InputLeftElement>
                   <Input
                     type="text"
                     placeholder="Username"
@@ -125,8 +124,9 @@ export default function Signup() {
                   <InputLeftElement
                     pointerEvents="none"
                     color="gray.300"
-                    children={<CFaLock color="gray.300" />}
-                  />
+                  >
+                    <CFaLock color="gray.300" />
+                  </InputLeftElement>
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"

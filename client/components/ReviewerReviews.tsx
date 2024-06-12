@@ -38,7 +38,7 @@ const ReviewerReviews: React.FC = () => {
     };
 
     fetchReviews();
-  }, []);
+  }, [toast]);
 
   const handleDelete = async (id: number) => {
     try {
