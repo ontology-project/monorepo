@@ -1,8 +1,8 @@
 export const Button = {
   baseStyle: {
     _focus: {
-      boxShadow: "none",
+      boxShadow: 'none',
     },
-    borderRadius: "xl",
+    borderRadius: 'xl',
   },
-};
+}

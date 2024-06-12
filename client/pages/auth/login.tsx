@@ -1,6 +1,6 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import axios from 'axios';
-import { useRouter } from 'next/router';
+import React, { useState, ChangeEvent, FormEvent } from 'react'
+import axios from 'axios'
+import { useRouter } from 'next/router'
 import {
   Flex,
   Heading,
@@ -14,46 +14,52 @@ import {
   Link,
   Avatar,
   FormControl,
-  InputRightElement
-} from "@chakra-ui/react";
+  InputRightElement,
+} from '@chakra-ui/react'
 
-import { FaUserAlt, FaLock } from "react-icons/fa";
-import { BASE_URL } from '../../utils/constants';
+import { FaUserAlt, FaLock } from 'react-icons/fa'
+import { BASE_URL } from '../../utils/constants'
 
 interface Credentials {
-  username: string;
-  password: string;
+  username: string
+  password: string
 }
 
-const CFaUserAlt = chakra(FaUserAlt);
-const CFaLock = chakra(FaLock);
+const CFaUserAlt = chakra(FaUserAlt)
+const CFaLock = chakra(FaLock)
 
 export default function Login() {
-  const [credentials, setCredentials] = useState<Credentials>({ username: '', password: '' });
-  const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
+  const [credentials, setCredentials] = useState<Credentials>({
+    username: '',
+    password: '',
+  })
+  const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter()
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
-  };
+    setCredentials({ ...credentials, [e.target.name]: e.target.value })
+  }
 
-  const handleShowClick = () => setShowPassword(!showPassword);
+  const handleShowClick = () => setShowPassword(!showPassword)
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      const response = await axios.post(`${BASE_URL}/user/jwt/create/`, credentials);
-      const { access, refresh, user } = response.data;
-      localStorage.setItem('authToken', access);
-      localStorage.setItem('refreshToken', refresh);
-      localStorage.setItem('username', user.username);
-      localStorage.setItem('isKaprodi', user.is_kaprodi);
-      router.push('/');
+      const response = await axios.post(
+        `${BASE_URL}/user/jwt/create/`,
+        credentials
+      )
+      const { access, refresh, user } = response.data
+      localStorage.setItem('authToken', access)
+      localStorage.setItem('refreshToken', refresh)
+      localStorage.setItem('username', user.username)
+      localStorage.setItem('isKaprodi', user.is_kaprodi)
+      router.push('/')
     } catch (error) {
-      console.error('Login error:', error);
-      alert('Login failed!');
+      console.error('Login error:', error)
+      alert('Login failed!')
     }
-  };
+  }
 
   return (
     <Flex
@@ -72,7 +78,7 @@ export default function Login() {
       >
         <Avatar bg="purple.500" />
         <Heading color="purple.400">Welcome</Heading>
-        <Box minW={{ base: "90%", md: "468px" }}>
+        <Box minW={{ base: '90%', md: '468px' }}>
           <form onSubmit={handleSubmit}>
             <Stack
               spacing={4}
@@ -100,7 +106,7 @@ export default function Login() {
                     <CFaLock color="gray.300" />
                   </InputLeftElement>
                   <Input
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="Password"
                     name="password"
                     value={credentials.password}
@@ -108,7 +114,7 @@ export default function Login() {
                   />
                   <InputRightElement width="4.5rem">
                     <Button h="1.75rem" size="sm" onClick={handleShowClick}>
-                      {showPassword ? "Hide" : "Show"}
+                      {showPassword ? 'Hide' : 'Show'}
                     </Button>
                   </InputRightElement>
                 </InputGroup>
@@ -126,11 +132,11 @@ export default function Login() {
         </Box>
       </Stack>
       <Box>
-        Don&apos;t have an account?{" "}
+        Don&apos;t have an account?{' '}
         <Link color="purple.500" href="/auth/signup">
           Sign Up
         </Link>
       </Box>
     </Flex>
-  );
+  )
 }

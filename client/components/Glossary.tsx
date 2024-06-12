@@ -1,13 +1,19 @@
-import { Box, Heading, Text, useBreakpointValue } from "@chakra-ui/react";
-import { TERMS } from "../utils/constants";
+import { Box, Heading, Text, useBreakpointValue } from '@chakra-ui/react'
+import { TERMS } from '../utils/constants'
 
 const Glossary: React.FC = () => {
-  const columns = useBreakpointValue({ base: 1, md: 2, lg: 3 });
+  const columns = useBreakpointValue({ base: 1, md: 2, lg: 3 })
 
   return (
     <Box>
-      <Heading mt={8} mb={4}>Glossary</Heading>
-      <Box display="grid" gridTemplateColumns={`repeat(${columns}, 1fr)`} gap={4}>
+      <Heading mt={8} mb={4}>
+        Glossary
+      </Heading>
+      <Box
+        display="grid"
+        gridTemplateColumns={`repeat(${columns}, 1fr)`}
+        gap={4}
+      >
         {TERMS.map((term, index) => (
           <Box
             key={index}
@@ -23,7 +29,7 @@ const Glossary: React.FC = () => {
         ))}
       </Box>
     </Box>
-  );
-};
+  )
+}
 
-export default Glossary;
+export default Glossary

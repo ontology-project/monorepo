@@ -1,7 +1,7 @@
 export const Container = {
   baseStyle: {
-    borderRadius: "xl",
-    maxW: "container.lg",
-    fontSize: "lg",
+    borderRadius: 'xl',
+    maxW: 'container.lg',
+    fontSize: 'lg',
   },
-};
+}

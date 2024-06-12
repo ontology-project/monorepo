@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import {
   Box,
   Heading,
@@ -12,53 +12,57 @@ import {
   Select,
   Button,
   Input,
-} from '@chakra-ui/react';
-import { apiGet } from '../../utils/api';
-import AuthCheck from '../../components/AuthCheck';
-import { useRouter } from 'next/router';
-import { formatRelative } from 'date-fns';
-import { TOAST_DURATION } from '../../utils/constants';
+} from '@chakra-ui/react'
+import { apiGet } from '../../utils/api'
+import AuthCheck from '../../components/AuthCheck'
+import { useRouter } from 'next/router'
+import { formatRelative } from 'date-fns'
+import { TOAST_DURATION } from '../../utils/constants'
 
 interface Review {
-  id: number;
-  comment: string;
-  rating: number;
-  query: string;
-  curriculum: string;
-  created_at: string;
-  updated_at: string;
-  reviewer: string;
+  id: number
+  comment: string
+  rating: number
+  query: string
+  curriculum: string
+  created_at: string
+  updated_at: string
+  reviewer: string
 }
 
 const KaprodiReviews: React.FC = () => {
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [sortedReviews, setSortedReviews] = useState<Review[]>([]);
-  const [visibleReviewers, setVisibleReviewers] = useState<string[]>([]);
-  const [curriculumOptions, setCurriculumOptions] = useState<string[]>([]);
-  const [curriculumFilters, setCurriculumFilters] = useState<{ [key: string]: string }>({});
-  const toast = useToast();
-  const router = useRouter();
+  const [reviews, setReviews] = useState<Review[]>([])
+  const [sortedReviews, setSortedReviews] = useState<Review[]>([])
+  const [visibleReviewers, setVisibleReviewers] = useState<string[]>([])
+  const [curriculumOptions, setCurriculumOptions] = useState<string[]>([])
+  const [curriculumFilters, setCurriculumFilters] = useState<{
+    [key: string]: string
+  }>({})
+  const toast = useToast()
+  const router = useRouter()
 
   useEffect(() => {
     if (localStorage.getItem('isKaprodi') === 'false') {
-      router.push('/');
+      router.push('/')
     }
-  }, [router]);
+  }, [router])
 
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await apiGet('/review/');
+        const response = await apiGet('/review/')
         const sorted = response.sort((a: Review, b: Review) => {
-          if (a.curriculum < b.curriculum) return -1;
-          if (a.curriculum > b.curriculum) return 1;
-          if (a.query < b.query) return -1;
-          if (a.query > b.query) return 1;
-          return 0;
-        });
-        setReviews(sorted);
-        setSortedReviews(sorted);
-        setVisibleReviewers([...new Set(sorted.map((review: Review) => review.reviewer))]);
+          if (a.curriculum < b.curriculum) return -1
+          if (a.curriculum > b.curriculum) return 1
+          if (a.query < b.query) return -1
+          if (a.query > b.query) return 1
+          return 0
+        })
+        setReviews(sorted)
+        setSortedReviews(sorted)
+        setVisibleReviewers([
+          ...new Set(sorted.map((review: Review) => review.reviewer)),
+        ])
       } catch (error: any) {
         toast({
           title: 'Error loading reviews',
@@ -66,60 +70,73 @@ const KaprodiReviews: React.FC = () => {
           status: 'error',
           duration: TOAST_DURATION,
           isClosable: true,
-        });
+        })
       }
-    };
+    }
 
-    fetchReviews();
-  }, [toast]);
+    fetchReviews()
+  }, [toast])
 
   useEffect(() => {
     const fetchCurriculums = async () => {
       try {
-        const data = await apiGet('api/graphdb/get-curriculums');
-        setCurriculumOptions(data.curriculums);
+        const data = await apiGet('api/graphdb/get-curriculums')
+        setCurriculumOptions(data.curriculums)
       } catch (error: any) {
-        console.log("error fetching curriculums", error)
+        console.log('error fetching curriculums', error)
       }
-    };
+    }
 
-    fetchCurriculums();
-  }, []);
+    fetchCurriculums()
+  }, [])
 
-  const handleFilterChange = (reviewer: string, e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleFilterChange = (
+    reviewer: string,
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setCurriculumFilters({
       ...curriculumFilters,
       [reviewer]: e.target.value,
-    });
-  };
+    })
+  }
 
   const toggleReviewerVisibility = (reviewer: string) => {
-    setVisibleReviewers(prev => 
-      prev.includes(reviewer) 
-        ? prev.filter(r => r !== reviewer) 
+    setVisibleReviewers((prev) =>
+      prev.includes(reviewer)
+        ? prev.filter((r) => r !== reviewer)
         : [...prev, reviewer]
-    );
-  };
+    )
+  }
 
   const getFilteredReviews = (reviewer: string) => {
-    if (!curriculumFilters[reviewer]) return groupedReviews[reviewer];
-    return groupedReviews[reviewer].filter(review => review.curriculum === curriculumFilters[reviewer]);
-  };
+    if (!curriculumFilters[reviewer]) return groupedReviews[reviewer]
+    return groupedReviews[reviewer].filter(
+      (review) => review.curriculum === curriculumFilters[reviewer]
+    )
+  }
 
   // Group reviews by reviewer
-  const groupedReviews = sortedReviews.reduce((acc: { [key: string]: Review[] }, review) => {
-    acc[review.reviewer] = acc[review.reviewer] || [];
-    acc[review.reviewer].push(review);
-    return acc;
-  }, {});
+  const groupedReviews = sortedReviews.reduce(
+    (acc: { [key: string]: Review[] }, review) => {
+      acc[review.reviewer] = acc[review.reviewer] || []
+      acc[review.reviewer].push(review)
+      return acc
+    },
+    {}
+  )
 
   return (
     <AuthCheck>
       <Box padding={10}>
         <Heading mb={4}>Review Comments</Heading>
-        {Object.keys(groupedReviews).map(reviewer => (
+        {Object.keys(groupedReviews).map((reviewer) => (
           <Box key={reviewer} mb={8}>
-            <Box display="flex" alignItems="center" justifyContent="space-between" mb={4}>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              mb={4}
+            >
               <Heading
                 size="md"
                 onClick={() => toggleReviewerVisibility(reviewer)}
@@ -127,7 +144,8 @@ const KaprodiReviews: React.FC = () => {
                 _hover={{ textDecoration: 'underline' }}
                 flex="1"
               >
-                {reviewer} ({visibleReviewers.includes(reviewer) ? 'Hide' : 'Show'})
+                {reviewer} (
+                {visibleReviewers.includes(reviewer) ? 'Hide' : 'Show'})
               </Heading>
               {visibleReviewers.includes(reviewer) && (
                 <Select
@@ -159,14 +177,24 @@ const KaprodiReviews: React.FC = () => {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {getFilteredReviews(reviewer).map(review => (
+                  {getFilteredReviews(reviewer).map((review) => (
                     <Tr key={review.id}>
                       <Td>{review.curriculum}</Td>
                       <Td>{review.query}</Td>
                       <Td>{review.comment}</Td>
                       <Td>{review.rating}</Td>
-                      <Td>{formatRelative(new Date(review.created_at), new Date())}</Td>
-                      <Td>{formatRelative(new Date(review.updated_at), new Date())}</Td>
+                      <Td>
+                        {formatRelative(
+                          new Date(review.created_at),
+                          new Date()
+                        )}
+                      </Td>
+                      <Td>
+                        {formatRelative(
+                          new Date(review.updated_at),
+                          new Date()
+                        )}
+                      </Td>
                     </Tr>
                   ))}
                 </Tbody>
@@ -176,8 +204,7 @@ const KaprodiReviews: React.FC = () => {
         ))}
       </Box>
     </AuthCheck>
-  );
+  )
+}
 
-};
-
-export default KaprodiReviews;
+export default KaprodiReviews
