@@ -1,3 +1,4 @@
+// export const BASE_URL = 'http://localhost:8000/api'
 export const BASE_URL = 'https://ontologyresearch.cs.ui.ac.id/api'
 
 export const EXCEL_TEMPLATE_URL =

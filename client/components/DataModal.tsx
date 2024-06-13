@@ -73,7 +73,8 @@ const DataModal: React.FC<DataModalProps> = ({
     if (
       query === 'PEO to PLO Mapping' ||
       query === 'PLO to Course Mapping' ||
-      query === 'CLO to Course Mapping'
+      query === 'CLO to Course Mapping' ||
+      query === 'Curriculum Structure'
     ) {
       return <NestedTable data={data?.properties} query={query} />
     }

@@ -23,4 +23,7 @@ export const valueMappings: { [key: string]: string } = {
   NO_RELATION: '❌',
   NO_COURSE: '❌',
   NO_LABEL: '❌',
+  Y: '✅',
+  N: '❌',
+  '': '❌',
 }

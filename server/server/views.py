@@ -667,10 +667,9 @@ class GetCurriculumStructure(APIView):
         PREFIX owl: <{OWL}>
 
         SELECT ?peo (IF(BOUND(?plo), ?plo, "NO_RELATION") AS ?hasPLORel)
-
                 (IF(BOUND(?clo), ?clo, "NO_RELATION") AS ?hasCLORel)
                 (IF(BOUND(?ulo), ?ulo, "NO_RELATION") AS ?hasULORel) WHERE {{
-	        :{curriculum} a :Curriculum;
+            :{curriculum} a :Curriculum;
                 :hasPEO ?peo .
             ?peo a :ProgramEducationalObjective .
             OPTIONAL {{ 
@@ -697,13 +696,34 @@ class GetCurriculumStructure(APIView):
         try:
             results = sparql.queryAndConvert()
             properties = [{
-                "peo":clean_response(result["peo"]["value"]),
-                "hasPLORel":clean_response(result["hasPLORel"]["value"]),
-                "hasCLORel":clean_response(result["hasCLORel"]["value"]),
-                "hasULORel":clean_response(result["hasULORel"]["value"]),
+                "peo": clean_response(result["peo"]["value"]),
+                "hasPLORel": clean_response(result["hasPLORel"]["value"]),
+                "hasCLORel": clean_response(result["hasCLORel"]["value"]),
+                "hasULORel": clean_response(result["hasULORel"]["value"]),
                 } for result in results["results"]["bindings"]]
 
-            return Response({'success': 'Get Curriculum Structure Success!', 'properties': properties})
+            # Initialize an empty dictionary to hold the result
+            result = {}
+
+            # Iterate over the data
+            for item in properties:
+                # If the 'peo' value is not in the result, add it
+                if item['peo'] not in result:
+                    result[item['peo']] = {
+                        'peo': item['peo'],
+                        'plo': []
+                    }
+                # Add the 'plo' value to the list
+                result[item['peo']]['plo'].append({
+                    'hasPLORel': item['hasPLORel'],
+                    'hasCLORel': item['hasCLORel'],
+                    'hasULORel': item['hasULORel']
+                })
+
+            # Convert the result to a list of dictionaries
+            final_result = list(result.values())
+
+            return Response({'success': 'Get Curriculum Structure Success!', 'properties': final_result})
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

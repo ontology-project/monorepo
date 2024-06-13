@@ -30,7 +30,9 @@ const NestedTable: React.FC<NestedTableProps> = ({ data, query }) => {
       <Thead>
         <Tr>
           <Th>{getDisplayKey('hasPLORel')}</Th>
-          <Th>{getDisplayKey('ploLabel')}</Th>
+          {query !== 'Curriculum Structure' && (
+            <Th>{getDisplayKey('ploLabel')}</Th>
+          )}
           {query === 'CLO to Course Mapping' && (
             <Th>{getDisplayKey('hasCLORel')}</Th>
           )}
@@ -43,13 +45,21 @@ const NestedTable: React.FC<NestedTableProps> = ({ data, query }) => {
           {query === 'PLO to Course Mapping' && (
             <Th>{getDisplayKey('hasCourse')}</Th>
           )}
+          {query === 'Curriculum Structure' && (
+            <>
+              <Th>{getDisplayKey('hasCLORel')}</Th>
+              <Th>{getDisplayKey('hasULORel')}</Th>
+            </>
+          )}
         </Tr>
       </Thead>
       <Tbody>
         {ploArray.map((plo, index) => (
           <Tr key={index}>
-            <Td>{plo.hasPLORel}</Td>
-            <Td>{plo.ploLabel}</Td>
+            <Td>{getDisplayValue(plo.hasPLORel)}</Td>
+            {query !== 'Curriculum Structure' && (
+              <Td>{getDisplayValue(plo.ploLabel)}</Td>
+            )}
             {query === 'CLO to Course Mapping' &&
               plo.clo &&
               plo.clo.length > 0 && (
@@ -66,32 +76,16 @@ const NestedTable: React.FC<NestedTableProps> = ({ data, query }) => {
             {query === 'PLO to Course Mapping' && (
               <Td>{getDisplayValue(plo.course)}</Td>
             )}
+            {query === 'Curriculum Structure' && (
+              <>
+                <Td>{getDisplayValue(plo.hasCLORel)}</Td>
+                <Td>{getDisplayValue(plo.hasULORel)}</Td>
+              </>
+            )}
           </Tr>
         ))}
       </Tbody>
     </Table>
-  )
-
-  const renderPLO = (ploArray: any[]) => (
-    <Accordion allowMultiple>
-      {ploArray.map((plo, index) => (
-        <AccordionItem key={index}>
-          <AccordionButton>
-            <Box flex="1" textAlign="left" isTruncated>
-              {plo.hasPLORel} - {plo.ploLabel}
-            </Box>
-            {query === 'CLO to Course Mapping' &&
-              plo.clo &&
-              plo.clo.length > 0 && <AccordionIcon />}
-          </AccordionButton>
-          <AccordionPanel pb={4}>
-            {query === 'CLO to Course Mapping' && plo.clo && plo.clo.length > 0
-              ? renderPLOTable([plo])
-              : null}
-          </AccordionPanel>
-        </AccordionItem>
-      ))}
-    </Accordion>
   )
 
   return (
@@ -101,7 +95,8 @@ const NestedTable: React.FC<NestedTableProps> = ({ data, query }) => {
           <AccordionItem key={index}>
             <AccordionButton>
               <Box flex="1" textAlign="left" isTruncated>
-                {item.peo} - {item.peoLabel}
+                {item.peo}
+                {query !== 'Curriculum Structure' && ` - ${item.peoLabel}`}
               </Box>
               {item.plo && item.plo.length > 0 && <AccordionIcon />}
             </AccordionButton>
