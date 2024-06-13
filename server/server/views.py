@@ -946,6 +946,7 @@ class TestAPIView(APIView):
         print("sparqql", query_string)
 
         try:
+            print('TRY BLOCK')
             results = sparql.queryAndConvert()
             properties = [{
                 "s":clean_response(result["s"]["value"]),
