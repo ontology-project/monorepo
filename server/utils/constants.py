@@ -1,5 +1,5 @@
 # GRAPHDB_GET="http://localhost:7200/repositories/coba"
-GRAPHDB_GET="https://ontologyresearch.cs.ui.ac.id/db/repositories/ontology-research-db"
+GRAPHDB_GET="http://127.0.0.1:7200/repositories/ontology-research-db"
 GRAPHDB_POST=GRAPHDB_GET + "/statements"
 
 
