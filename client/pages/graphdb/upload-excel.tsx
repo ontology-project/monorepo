@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import {
   Box,
   Heading,
@@ -8,14 +8,13 @@ import {
   Button,
   Link,
   Spinner,
-  Text
-} from '@chakra-ui/react';
-import AuthCheck from '../../components/AuthCheck';
-import { EXCEL_TEMPLATE_URL } from '../../utils/constants';
-import UploadResultModal from '../../components/UploadResultModal';
-import { useFileUpload } from '../../utils/util';
-import { useRouter } from 'next/router';
-
+  Text,
+} from '@chakra-ui/react'
+import AuthCheck from '../../components/AuthCheck'
+import { EXCEL_TEMPLATE_URL } from '../../utils/constants'
+import UploadResultModal from '../../components/UploadResultModal'
+import { useFileUpload } from '../../utils/util'
+import { useRouter } from 'next/router'
 
 const UploadExcel: React.FC = () => {
   const {
@@ -28,14 +27,14 @@ const UploadExcel: React.FC = () => {
     handleFileChange,
     handleSubmit,
     setUploadResponse,
-  } = useFileUpload();
-  const router = useRouter();
+  } = useFileUpload()
+  const router = useRouter()
 
   useEffect(() => {
     if (localStorage.getItem('isKaprodi') === 'false') {
-      router.push('/');
+      router.push('/')
     }
-  }, [router]);
+  }, [router])
 
   return (
     <AuthCheck>
@@ -69,7 +68,7 @@ const UploadExcel: React.FC = () => {
         />
       </Box>
     </AuthCheck>
-  );
-};
+  )
+}
 
-export default UploadExcel;
+export default UploadExcel

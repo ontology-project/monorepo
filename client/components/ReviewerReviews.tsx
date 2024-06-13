@@ -1,31 +1,49 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Button, Text, Table, Tbody, Td, Th, Thead, Tr, useToast, Input, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, Heading } from '@chakra-ui/react';
-import { apiDelete, apiGet, apiPut } from '../utils/api';
-import { formatRelative } from 'date-fns/formatRelative';
-import { TOAST_DURATION } from '../utils/constants';
+import React, { useEffect, useState } from 'react'
+import {
+  Box,
+  Button,
+  Text,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  useToast,
+  Input,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  Heading,
+} from '@chakra-ui/react'
+import { apiDelete, apiGet, apiPut } from '../utils/api'
+import { formatRelative } from 'date-fns/formatRelative'
+import { TOAST_DURATION } from '../utils/constants'
 
 interface Review {
-  id: number;
-  comment: string;
-  rating: number;
-  query: string;
-  curriculum: string;
-  created_at: string;
-  updated_at: string;
+  id: number
+  comment: string
+  rating: number
+  query: string
+  curriculum: string
+  created_at: string
+  updated_at: string
 }
 
 const ReviewerReviews: React.FC = () => {
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [editableReviewId, setEditableReviewId] = useState<number | null>(null);
-  const [editedComment, setEditedComment] = useState<string>('');
-  const [editedRating, setEditedRating] = useState<number>(0);
-  const toast = useToast();
+  const [reviews, setReviews] = useState<Review[]>([])
+  const [editableReviewId, setEditableReviewId] = useState<number | null>(null)
+  const [editedComment, setEditedComment] = useState<string>('')
+  const [editedRating, setEditedRating] = useState<number>(0)
+  const toast = useToast()
 
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await apiGet('/review/');
-        setReviews(response);
+        const response = await apiGet('/review/')
+        setReviews(response)
       } catch (error: any) {
         toast({
           title: 'Error loading reviews',
@@ -33,23 +51,23 @@ const ReviewerReviews: React.FC = () => {
           status: 'error',
           duration: TOAST_DURATION,
           isClosable: true,
-        });
+        })
       }
-    };
+    }
 
-    fetchReviews();
-  }, []);
+    fetchReviews()
+  }, [toast])
 
   const handleDelete = async (id: number) => {
     try {
-      await apiDelete(`/review/${id}/`);
-      setReviews(reviews.filter(review => review.id !== id));
+      await apiDelete(`/review/${id}/`)
+      setReviews(reviews.filter((review) => review.id !== id))
       toast({
         title: 'Review deleted',
         status: 'success',
         duration: TOAST_DURATION,
         isClosable: true,
-      });
+      })
     } catch (error: any) {
       toast({
         title: 'Error deleting review',
@@ -57,36 +75,45 @@ const ReviewerReviews: React.FC = () => {
         status: 'error',
         duration: TOAST_DURATION,
         isClosable: true,
-      });
+      })
     }
-  };
+  }
 
   const handleEdit = (review: Review) => {
-    setEditableReviewId(review.id);
-    setEditedComment(review.comment);
-    setEditedRating(review.rating);
-  };
+    setEditableReviewId(review.id)
+    setEditedComment(review.comment)
+    setEditedRating(review.rating)
+  }
 
   const handleCancelEdit = () => {
-    setEditableReviewId(null);
-  };
+    setEditableReviewId(null)
+  }
 
   const handleSave = async (id: number) => {
     try {
-      const review = reviews.find(review => review.id === id);
-      if (!review) return;
-      
-      const updatedReview = { comment: editedComment, rating: editedRating, query: review.query, curriculum: review.curriculum };
-      await apiPut(`/review/${id}/`, updatedReview);
-      setReviews(reviews.map(review => review.id === id ? { ...review, ...updatedReview } : review));
-      setEditableReviewId(null);
+      const review = reviews.find((review) => review.id === id)
+      if (!review) return
+
+      const updatedReview = {
+        comment: editedComment,
+        rating: editedRating,
+        query: review.query,
+        curriculum: review.curriculum,
+      }
+      await apiPut(`/review/${id}/`, updatedReview)
+      setReviews(
+        reviews.map((review) =>
+          review.id === id ? { ...review, ...updatedReview } : review
+        )
+      )
+      setEditableReviewId(null)
       toast({
         title: 'Review updated',
         status: 'success',
         duration: TOAST_DURATION,
         isClosable: true,
-      });
-      window.location.reload();
+      })
+      window.location.reload()
     } catch (error: any) {
       toast({
         title: 'Error updating review',
@@ -94,13 +121,15 @@ const ReviewerReviews: React.FC = () => {
         status: 'error',
         duration: TOAST_DURATION,
         isClosable: true,
-      });
+      })
     }
-  };
+  }
 
   return (
     <Box>
-      <Heading mt={8} mb={4}>Your Reviews</Heading>
+      <Heading mt={8} mb={4}>
+        Your Reviews
+      </Heading>
       <Table variant="simple">
         <Thead>
           <Tr>
@@ -114,7 +143,7 @@ const ReviewerReviews: React.FC = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {reviews.map(review => (
+          {reviews.map((review) => (
             <Tr key={review.id}>
               <Td>{review.curriculum}</Td>
               <Td>{review.query}</Td>
@@ -134,7 +163,9 @@ const ReviewerReviews: React.FC = () => {
                     min={0}
                     max={4}
                     value={editedRating}
-                    onChange={(valueString) => setEditedRating(parseInt(valueString))}
+                    onChange={(valueString) =>
+                      setEditedRating(parseInt(valueString))
+                    }
                   >
                     <NumberInputField />
                     <NumberInputStepper>
@@ -151,19 +182,42 @@ const ReviewerReviews: React.FC = () => {
               <Td>
                 {editableReviewId === review.id ? (
                   <>
-                    <Button colorScheme="teal" size="sm" mr={2} mb={2} onClick={() => handleSave(review.id)}>
+                    <Button
+                      colorScheme="teal"
+                      size="sm"
+                      mr={2}
+                      mb={2}
+                      onClick={() => handleSave(review.id)}
+                    >
                       Submit
                     </Button>
-                    <Button colorScheme="gray" size="sm" onClick={handleCancelEdit}>
+                    <Button
+                      colorScheme="gray"
+                      size="sm"
+                      onClick={handleCancelEdit}
+                    >
                       Cancel
                     </Button>
                   </>
                 ) : (
                   <>
-                    <Button colorScheme="teal" size="sm" p={4} mr={2} my={1} onClick={() => handleEdit(review)}>
+                    <Button
+                      colorScheme="teal"
+                      size="sm"
+                      p={4}
+                      mr={2}
+                      my={1}
+                      onClick={() => handleEdit(review)}
+                    >
                       Edit
                     </Button>
-                    <Button colorScheme="red" size="sm" p={4} my={1} onClick={() => handleDelete(review.id)}>
+                    <Button
+                      colorScheme="red"
+                      size="sm"
+                      p={4}
+                      my={1}
+                      onClick={() => handleDelete(review.id)}
+                    >
                       Delete
                     </Button>
                   </>
@@ -174,7 +228,7 @@ const ReviewerReviews: React.FC = () => {
         </Tbody>
       </Table>
     </Box>
-  );
-};
+  )
+}
 
-export default ReviewerReviews;
+export default ReviewerReviews

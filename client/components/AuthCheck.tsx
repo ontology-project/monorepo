@@ -1,10 +1,10 @@
-import React from 'react';
-import { useAuth } from '../utils/util';
+import React from 'react'
+import { useAuth } from '../utils/util'
 import styles from '../styles/Home.module.css'
-import Link from 'next/link';
+import Link from 'next/link'
 
 const AuthCheck: React.FC = ({ children }) => {
-  const { isLoggedIn, username } = useAuth();
+  const { isLoggedIn, username } = useAuth()
 
   if (!isLoggedIn) {
     return (
@@ -15,10 +15,10 @@ const AuthCheck: React.FC = ({ children }) => {
           </h1>
         </main>
       </div>
-    );
+    )
   }
 
-  return <>{children}</>;
-};
+  return <>{children}</>
+}
 
-export default AuthCheck;
+export default AuthCheck
