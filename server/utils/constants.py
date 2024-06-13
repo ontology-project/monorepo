@@ -1,4 +1,4 @@
-GRAPHDB_GET="https://127.0.0.1:7200/repositories/ontology-research-db"
+GRAPHDB_GET="http://127.0.0.1:7200/repositories/ontology-research-db"
 GRAPHDB_POST=GRAPHDB_GET + "/statements"
 
 
