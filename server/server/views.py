@@ -925,6 +925,40 @@ class GetPEOByCurriculumAPIView(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+class TestAPIView(APIView):
+    def get(self, request):
+        
+        query_string = f"""
+        PREFIX : <{PREFIX}> 
+        PREFIX rdf: <{RDF}>
+        PREFIX owl: <{OWL}>
+
+        SELECT * WHERE {{
+            ?s ?p ?o .
+            }} LIMIT 10
+        """
+
+        sparql = SPARQLWrapper(GRAPHDB_GET) 
+        sparql.setQuery(query_string)
+        sparql.setReturnFormat(JSON)
+        sparql.setMethod("GET")
+
+        print("sparqql", query_string)
+
+        try:
+            results = sparql.queryAndConvert()
+            properties = [{
+                "s":clean_response(result["s"]["value"]),
+                "p":clean_response(result["p"]["value"]),
+                "o":clean_response(result["o"]["value"]),
+                } for result in results["results"]["bindings"]]
+
+            return Response({'success': 'Testing Success!', 'properties': properties})
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 
 
 # Neo4J APIs
