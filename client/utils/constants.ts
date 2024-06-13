@@ -1,7 +1,7 @@
 export const BASE_URL = 'https://ontologyresearch.cs.ui.ac.id/api'
 
 export const EXCEL_TEMPLATE_URL =
-  'https://docs.google.com/spreadsheets/d/148SL5KCIAHdQUPKF2dAc5nJ1OTYFgHQ7vNyzaWeGDzc/edit?usp=sharing'
+  'https://docs.google.com/spreadsheets/d/1lDcFnYP5eo40tF3rCqgclSB2JsucMRsG/edit?usp=sharing&ouid=111756438301550504739&rtpof=true&sd=true'
 
 export const NODE_TYPES = [
   'AssesmentTask',
