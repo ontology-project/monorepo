@@ -1,4 +1,4 @@
-GRAPHDB_GET="https://ontologyresearch.cs.ui.ac.id/db/repositories/ontology-research-db"
+GRAPHDB_GET="https://127.0.0.1/db/repositories/ontology-research-db"
 GRAPHDB_POST=GRAPHDB_GET + "/statements"
 
 
