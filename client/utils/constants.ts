@@ -42,7 +42,7 @@ export const RELATIONSHIPS = [
 
 export const QUERIES = [
   { text: 'PLO', endpoint: '/api/get-plo' },
-  { text: 'PLO and the SNDikti components', endpoint: '/api/get-sndikti' },
+  // { text: 'PLO and the SNDikti components', endpoint: '/api/get-sndikti' },
   { text: 'PLO and the KKNI components', endpoint: '/api/get-kkni' },
   {
     text: 'PLO and Cognitive, Affective, Psychomotoric Domains',
